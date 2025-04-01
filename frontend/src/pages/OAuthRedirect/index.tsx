@@ -1,7 +1,10 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import {setAccessToken, setRefreshToken, setUser} from "../../redux/reducers/authSlice"
 
 const OAuthRedirect = () => {
+  const dispatch = useDispatch()
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -21,7 +24,10 @@ const OAuthRedirect = () => {
 
     // If access token exists, store it in localStorage
     if (accessToken) {
-      localStorage.setItem('token', accessToken);
+      // localStorage.setItem('token', accessToken);
+             dispatch(setAccessToken(accessToken))
+              dispatch(setRefreshToken(refreshToken))
+              // dispatch(setUser(response.data.result?.user))
     }
 
     // Redirect the user after storing the token

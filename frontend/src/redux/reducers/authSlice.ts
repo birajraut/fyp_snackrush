@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { IAuth } from '../../types/redux'
+import { IAuth, IRestaurant } from '../../types/redux'
 import { IUserResponse } from '../../types/user'
 import type { PayloadAction } from '@reduxjs/toolkit'
 
@@ -7,7 +7,11 @@ import type { PayloadAction } from '@reduxjs/toolkit'
 const initialState: IAuth = {
     accessToken: '',
     refreshToken: '',
-    user: null
+    user: null,
+    restaurant:{
+        id: "",
+        name: ""
+    }
 }
 
 const authSlice = createSlice({
@@ -22,12 +26,15 @@ const authSlice = createSlice({
         },
         setUser: (state, action: PayloadAction<IUserResponse | null>) => {
             state.user = action.payload
+        },
+        setRestaurant: (state, action: PayloadAction<IRestaurant | null>) => {
+            state.restaurant = action.payload
         }
     }
 
 })
 
 
-export const { setAccessToken, setRefreshToken,setUser } = authSlice.actions
+export const { setAccessToken,setRestaurant, setRefreshToken,setUser } = authSlice.actions
 
 export default authSlice.reducer

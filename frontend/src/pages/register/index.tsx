@@ -16,7 +16,7 @@ const RegisterPage = () => {
       password: '',
       address: '',
       contactNumber: '',
-      role:'',
+      role: '',
     },
     validationSchema: Yup.object({
       fullName: Yup.string().max(50, 'Must be 50 characters or less').required('Full Name is required'),
@@ -29,7 +29,7 @@ const RegisterPage = () => {
       try {
         await axios.post('http://localhost:8000/api/auth/register', values);
         alert('Registration Successful');
-localStorage.setItem('email',values?.email?.toString())
+        localStorage.setItem('email', values?.email?.toString())
         navigate('/verifyOTP')
       } catch (error) {
         if (error instanceof AxiosError) {
@@ -64,12 +64,11 @@ localStorage.setItem('email',values?.email?.toString())
             <input type="tel" id="contactNumber" name="contactNumber" onChange={formik.handleChange} value={formik.values.contactNumber} className="border p-2 w-full" />
           </div>
           <div>
-          <label htmlFor="Role">User Role<br></br></label>
-          <select value={role} onChange={(e) => setRole(e.target.value)}>
-                    <option value="customer">Customer</option>
-                    <option value="restaurant_manager">Restaurant Manager</option>
-                    <option value="admin">Admin</option>
-                </select>
+            <label htmlFor="Role">User Role<br></br></label>
+            <select value={role} onChange={(e) => setRole(e.target.value)}>
+              <option value="customer">Customer</option>
+              <option value="restaurant_manager">Restaurant Manager</option>
+            </select>
           </div>
           <div>
             <label htmlFor="address">Address</label>

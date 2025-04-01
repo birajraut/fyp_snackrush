@@ -8,7 +8,12 @@ const UserSchema = new mongoose.Schema({
   contactNumber: { type: String },
   googleId: { type: String }, // For Google OAuth
   isGoogleUser: { type: Boolean, default: false }, // To differentiate Google users
-  isVerified: { type: Boolean, default: false } // ✅ Track email verification status
+  isVerified: { type: Boolean, default: false }, // ✅ Track email verification status
+  image:{type:String},
+  stripe_customer_id:{
+    type:String, 
+    unique:true
+  }
 }
 );
 

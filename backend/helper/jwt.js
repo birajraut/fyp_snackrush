@@ -33,7 +33,8 @@ const jwtValidate = async (token) => {
     const decoded = await new Promise((resolve, reject) => {
       jwt.verify(accessToken, process.env.JWT_SECRET, (err, decoded) => {
         if (err) {
-          reject(new Error('Token not valid'));
+          // reject(new Error('Token not valid'));
+          throw new Error('Token not valid')
         } else {
           resolve(decoded);
         }

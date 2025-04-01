@@ -2,8 +2,9 @@ import { Card, CardContent } from "../../components/ui/card";
 import { FaStar, FaBlog } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
-import FooterSection from '../../components/footer';
-import  Button  from '../../components/ui/button';
+import { useQuery } from "@tanstack/react-query";
+import { listRestaurant } from "../../services/restaurant";
+import RestaurantCard from '../../components/ui/restaurant/RestaurantCard'
 
 // Placeholder images for the hero section and restaurants
 const heroImages = [
@@ -62,12 +63,12 @@ const featuredRestaurants = [
   },
 ];
 
-const restaurants = [
-  { name: "KKFC", rating: 4.8, reviews: 320, image: "https://foodmandu.com//Images/Vendor/587/OriginalSize/kkfc-website-listing-logo_121018045529.png" },
-  { name: "KFC", rating: 4.7, reviews: 280, image: "https://upload.wikimedia.org/wikipedia/en/thumb/5/57/KFC_logo-image.svg/640px-KFC_logo-image.svg.png" },
-  { name: "BurgerHouse", rating: 4.6, reviews: 250, image: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/11/44/e8/e9/the-burger-house-and.jpg?w=800&h=-1&s=1" },
-  { name: "Chicken Station", rating: 4.5, reviews: 200, image: "https://images.foodmandu.com//Images/Vendor/508/OriginalSize/CHCKEN_STATION_200122063023_130624033522.APP_(1).jpg" },
-];
+// const restaurants = [
+//   { name: "KKFC", rating: 4.8, reviews: 320, image: "https://foodmandu.com//Images/Vendor/587/OriginalSize/kkfc-website-listing-logo_121018045529.png" },
+//   { name: "KFC", rating: 4.7, reviews: 280, image: "https://upload.wikimedia.org/wikipedia/en/thumb/5/57/KFC_logo-image.svg/640px-KFC_logo-image.svg.png" },
+//   { name: "BurgerHouse", rating: 4.6, reviews: 250, image: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/11/44/e8/e9/the-burger-house-and.jpg?w=800&h=-1&s=1" },
+//   { name: "Chicken Station", rating: 4.5, reviews: 200, image: "https://images.foodmandu.com//Images/Vendor/508/OriginalSize/CHCKEN_STATION_200122063023_130624033522.APP_(1).jpg" },
+// ];
 
 const blogPosts = [
   { title: "Top 5 Dishes to Try in 2024", author: "John Doe", snippet: "Discover the must-try dishes this year..." },
@@ -77,6 +78,12 @@ const blogPosts = [
 
 const HomePage = () => {
   const navigate = useNavigate();
+
+  const { data: restaurantList, isLoading, error } = useQuery({
+    queryKey: ['restaurant-list'],
+    queryFn: listRestaurant
+  });
+
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
 
   // Check if user is logged in
@@ -142,28 +149,40 @@ const HomePage = () => {
             </div>
           ))}
         </div>
-      {/* Restaurant Slider */}
-      <div className="p-6">
-        <h2 className="text-xl font-semibold mb-4">Most Reviewed Restaurants</h2>
-        <div className="flex gap-4 overflow-x-auto">
-          {restaurants.map((restaurant, index) => (
-            <Card key={index} className="p-4 min-w-[250px]">
-              <CardContent>
-                <img
-                  src={restaurant.image}
-                  alt={restaurant.name}
-                  className="w-full h-32 object-cover rounded-md mb-4"
-                />
-                <h3 className="text-lg font-bold">{restaurant.name}</h3>
-                <p className="flex items-center text-yellow-500">
-                  <FaStar /> {restaurant.rating} ({restaurant.reviews} reviews)
-                </p>
-              </CardContent>
-            </Card>
-          ))}
+
+     {/* Restaurant Section */}
+<div className="p-6">
+  {user==='admin'?<h2 className="text-xl font-semibold mb-4">Most Reviewed Restaurants</h2>:<h2 className="text-xl font-semibold mb-4">Most Reviewed Products</h2>}
+  <div
+    id="restaurant-carousel"
+    className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory"
+    style={{ scrollBehavior: "smooth" }}
+  >
+    {/* If data is loading, show a loader */}
+    {isLoading ? (
+      <div>Loading...</div>
+    ) : error ? (
+      <div>Error loading restaurants</div>
+    ) : (
+      restaurantList?.data?.result?.map((restaurant, index) => (
+        <div
+          key={index}
+          className="flex-shrink-0 w-64 bg-white rounded-lg shadow-md overflow-hidden snap-center"
+        >
+          <RestaurantCard
+            id={restaurant._id} // Assuming _id is the restaurant ID
+            title={restaurant.name}
+            description={restaurant.description}
+            logo={restaurant.image || "/default-restaurant-image.png"}
+          />
         </div>
-      </div>
-      <div className="p-6">
+      ))
+    )}
+  </div>
+</div>
+
+
+      {!user==='admin'?<div className="p-6">
         <h2 className="text-xl font-semibold mb-4">Most Featured Restaurants</h2>
         <div
           id="restaurant-carousel"
@@ -192,7 +211,7 @@ const HomePage = () => {
             </div>
           ))}
           </div>
-          </div>
+          </div>:null}
       {/* Blog Section */}
       <div className="p-6">
         <h2 className="text-xl font-semibold mb-4">People's Blogs</h2>
@@ -210,7 +229,7 @@ const HomePage = () => {
           ))}
         </div>
       </div>
-      <FooterSection/>
+    
     </div>
   );
 };

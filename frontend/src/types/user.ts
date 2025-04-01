@@ -5,4 +5,5 @@ export interface IUserResponse {
     address: string
     contactNumber: string | number
     isGoogleUser: boolean
+    image:string
 }

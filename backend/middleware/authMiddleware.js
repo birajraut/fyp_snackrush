@@ -1,23 +1,35 @@
 const jwt = require('jsonwebtoken');
-const {jwtValidate} = require('../helper/jwt')
-const authMiddleware = async (req, res, next) => {
-  const token =  req.headers['authorization'];
+const User = require('../models/User');
 
-  if (!token) {
-    return res.status(401).json({
-      message:'unauthorized'
-    });
+const authMiddleware = async (req, res, next) => {
+  try {
+    const token = req.headers['authorization'];
+    if (!token) {
+      return res.status(401).json({ error: 'Unauthorized: No token provided' });
+    }
+    const accessToken = token.split(' ')[1] || token; 
+    if (!accessToken) {
+      return res.status(401).json({ error: 'Unauthorized: Token format invalid' });
+    }
+    let decoded;
+    try {
+      decoded = jwt.verify(accessToken, process.env.JWT_SECRET);
+    } catch (err) {
+      return res.status(401).json({ error: 'Unauthorized: Token is not valid' });
+    }
+    if (!decoded || !decoded.payload.id) {
+      return res.status(401).json({ error: 'Unauthorized: Invalid token structure' });
+    }
+    const user = await User?.findById(decoded.payload.id);
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+    req.auth_user = user._id;
+    next();
+  } catch (err) {
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
-const decoded = await jwtValidate(token)
-if(decoded){
-  req.auth_user = decoded
-  next()
-}else{
-  return res.status(401).json({
-    message:'unauthorized-token not valid'
-  });
-}
- 
 };
 
 module.exports = authMiddleware;
+

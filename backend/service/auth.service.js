@@ -42,9 +42,9 @@ const OauthUserService = async (data)=>{
       // Register new user (you can add additional data from the OAuth response here)
       const useData = new User({
         email: data.email,
-        name: data.name, // If name is available
-        password: bcrypt.hashSync(data.email + process.env.SALT, 10), // Temporary password
-        oauth: true // Mark that this user registered via OAuth
+        fullName: data.name,
+        image:data.picture, 
+        isGoogleUser:true
       });
 
       // Save user to the database

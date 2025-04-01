@@ -39,8 +39,9 @@ passport.use(
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       callbackURL: "/auth/google/callback",
+      prompt: 'select_account' 
     },
-   async (profile, done) => {
+   async (_accessToken, _refreshToken, profile, done) => {
       return done(null, profile);
     }
   )
@@ -64,6 +65,7 @@ app.get(
 
 
 
+
 app.get(
   "/auth/google/callback",
   passport.authenticate("google", { failureRedirect: "/" }),
@@ -71,10 +73,12 @@ app.get(
 
     console.log('pro', req)
 
-    const {email, name} = req?.user?._json || {}
+    const {email, name, picture} = req?.user?._json || {}
 
     const data = {
-      email
+      email,
+      name,
+      picture
     }
 
       const {accessToken, refreshToken, userId} = await  OauthUserService(data)

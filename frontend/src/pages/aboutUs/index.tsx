@@ -1,7 +1,6 @@
 import { Card, CardContent } from "../../components/ui/card";
 import Button from "../../components/ui/button";
 import { FaUtensils, FaHeart, FaCheckCircle } from "react-icons/fa";
-import FooterSection from "../../components/footer";
 
 const AboutUs = () => {
   const isAuthenticated= localStorage.getItem('token')
@@ -12,21 +11,6 @@ window.location.href="/login"
   }
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Navbar */}
-      <nav className="bg-white shadow-md p-4 flex justify-between">
-        <h1 className="text-2xl font-semibold">SnackRush</h1>
-        <div className="flex gap-6">
-          <a href="/" className="text-gray-700 hover:text-black">Home</a>
-          <a href="/aboutUs" className="text-gray-700 hover:text-black">About Us</a>
-          <a href="/profile" className="text-gray-700 hover:text-black">Profile</a>
-        </div>
-       {isAuthenticated?<>        
-         <Button className="ml-2" onClick={()=>handleLogout()}>Log Out</Button>
-       </> :<div>
-          <Button variant="outline">Log In</Button>
-          <Button className="ml-2">Sign Up</Button>
-        </div>}
-      </nav>
 
       {/* About Section */}
       <div className="p-8 text-center">
@@ -64,7 +48,6 @@ window.location.href="/login"
           </CardContent>
         </Card>
       </div>
-      <FooterSection />
     </div>
   );
 };

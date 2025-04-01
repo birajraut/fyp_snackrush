@@ -1,62 +1,50 @@
-import React, { useState } from "react";
-import { CardElement, useStripe, useElements } from "@stripe/react-stripe-js";
-import axios from "axios";
+import StriteElement from "./StriteElement"; // Fixed the typo here
 
-const CheckoutPage: React.FC = () => {
-    const stripe = useStripe();
-    const elements = useElements();
-    const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState("");
+import {createSale } from '../../services/sale'
+import { useDispatch, useSelector } from "react-redux";
+import { resetCart } from "../../redux/reducers/cartSlice";
+import { useNavigate } from "react-router-dom";
 
-    const handlePayment = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setLoading(true);
+const CheckoutPage = () => {
+    const cart= useSelector(state=>state.cart.cart)
+const dispatch= useDispatch()
+const navigate = useNavigate()
+// const cartPayload =cart.
+const payload = cart.map(item => ({
+    product_id: item._id,
+    price: item.price * item.quantity
+}));
 
-        if (!stripe || !elements) return;
+    //     const payload = [
+    //         {
+    //         product_id:'ghjkl',
+    //         price:345678
+    //     },
+    //     {
+    //         product_id:'ghjkl',
+    //         price:345678
+    //     }
+    // ]
 
-        try {
-        // Step 1: Get client secret from backend
-            const { data } = await axios.post("http://localhost:8000/api/payments/create-payment-intent", {
-                amount: 5000, // Amount in cents ($50.00)
-                currency: "usd",
-            });
+    const submitFn = async  (data:any)=>{
 
-        // Step 2: Confirm Payment with Stripe
-            const result = await stripe.confirmCardPayment(data.clientSecret, {
-                payment_method: {
-                    card: elements.getElement(CardElement)!,
-            },
-            });
 
-            if (result.error) {
-                setMessage(result.error.message || "Payment failed");
-            } else {
-                setMessage("Payment successful!");
-            }
-        } catch (error) {
-            setMessage("Error processing payment.");
-            console.error(error);
+        const res = await  createSale({
+            ...data,
+            products:payload
+        })
+        // console.log('res sale', res?.status===200)
+        if(res?.status===200){
+            dispatch(resetCart())
+            navigate("/success")
         }
-
-    setLoading(false);
-    };
-
-    return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-        <h1 className="text-2xl font-bold mb-4">Stripe Payment</h1>
-        <form onSubmit={handlePayment} className="bg-white p-6 rounded shadow-md w-96">
-        <CardElement className="p-3 border border-gray-300 rounded" />
-        <button
-            type="submit"
-            className="bg-blue-500 text-white px-4 py-2 rounded mt-4 w-full disabled:opacity-50"
-            disabled={!stripe || loading}
-        >
-            {loading ? "Processing..." : "Pay $50.00"}
-        </button>
-        </form>
-        {message && <p className="mt-4 text-red-500">{message}</p>}
-    </div>
-    );
+        
+    }
+   return (
+    <>
+      <StriteElement submitFn={submitFn} />
+    </>
+   );
 };
 
 export default CheckoutPage;
