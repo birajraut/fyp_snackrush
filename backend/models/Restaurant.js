@@ -2,23 +2,35 @@ const mongoose = require('mongoose');
 
 const RestaurantSchema = new mongoose.Schema({
   name: { type: String, required: true },
-  locatioin:{
+  location: {
     type: String
   },
-  email:{
-    type:String, 
-    unique:true,
-    required: true 
+  email: {
+    type: String,
+    unique: true,
+    required: true
   },
-  password:{
-    type:String,
-    required: true 
+  password: {
+    type: String,
+    required: true
   },
-  // rating: { type: Number, default: 0 },
-  logo: { type: String }, // If uploading images, you may store the file path here.
-  banner: { type: String }, 
-  description: { type: String }, // Add description if needed
-  // reviews: { type: Number, default: 0 } // Add review count if needed
+  logo: { type: String },
+  banner: { type: String },
+  description: { type: String },
+  phone: {
+    type: String
+  },
+  status: {
+    type: String,
+    enum: ['PENDING', 'ACCEPTED', 'REJECTED'],
+    required: true,
+    default: 'PENDING',
+  },
+  creator: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true
+  },
 });
 
 module.exports = mongoose.model('Restaurant', RestaurantSchema);

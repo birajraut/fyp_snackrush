@@ -1,6 +1,6 @@
 
 const { listProductService } = require('../service/product.service')
-const {uploadCloudinary} = require('../config/cloudinary')
+const { uploadCloudinary } = require('../config/cloudinary')
 
 
 const Product = require('../models/Product');
@@ -17,18 +17,18 @@ const createProduct = async (req, res, next) => {
         if (!name || !price || !restaurant_id) {
             return res.status(400).json({ message: 'Name, price, and restaurant_id are required' });
         }
-        if(image){
+        if (image) {
             const uploadCloud = await uploadCloudinary(image)
             logoUrl = uploadCloud?.url
         }
-    
+
         // Create the product
         const newProduct = new Product({
             name,
             description,
             price,
             restaurant_id,
-     image:logoUrl
+            image: logoUrl
         });
 
         await newProduct.save();
@@ -40,10 +40,10 @@ const createProduct = async (req, res, next) => {
 };
 
 
- const listProductController= async (req, res, next)=>{
+const listProductController = async (req, res, next) => {
     try {
 
-        const {restaurantId} = req.params
+        const { restaurantId } = req.params
         const resp = await listProductService(restaurantId)
         res.json({
             result: resp,
@@ -55,4 +55,4 @@ const createProduct = async (req, res, next) => {
     }
 }
 
-module.exports = {  listProductController,createProduct};
+module.exports = { listProductController, createProduct };

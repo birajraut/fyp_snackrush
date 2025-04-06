@@ -3,25 +3,26 @@ const bcrypt = require("bcrypt");
 const { generateAccessToken, generateRefreshToken } = require("../helper/jwt");
 const { generateOTP } = require("../helper/generateOPT");
 const { sendEmail } = require("../helper/nodemailer");
-const {radisClient} = require('../config/radis');
-const {OAuth2Client} = require('passport-google-oauth20')
+const { radisClient } = require('../config/radis');
+const { OAuth2Client } = require('passport-google-oauth20')
 
 
 const registerUserService = async (data) => {
-  const { email, password, role,  } = data;
+  const { email, password, role, } = data;
   const user = await User.findOne({ email: email });
   if (user) {
     throw new Error("User already exists");
   } else {
 
-      const  hash = bcrypt.hashSync(data.password, 10);
-    
-  
+    const hash = bcrypt.hashSync(data.password, 10);
+
+
     const otp = generateOTP(6)
+    console.log(otp)
     const newData = {
       ...data,
       password: hash,
-      otp:otp
+      otp: otp
     };
     await sendEmail(email, 'otp', otp)
     const client = await radisClient()
@@ -30,7 +31,7 @@ const registerUserService = async (data) => {
   }
 };
 
-const OauthUserService = async (data)=>{
+const OauthUserService = async (data) => {
   try {
     // 1. Check if the user already exists based on the data (e.g., email)
     let user = await User.findOne({ email: data.email });
@@ -43,8 +44,8 @@ const OauthUserService = async (data)=>{
       const useData = new User({
         email: data.email,
         fullName: data.name,
-        image:data.picture, 
-        isGoogleUser:true
+        image: data.picture,
+        isGoogleUser: true
       });
 
       // Save user to the database
@@ -54,7 +55,7 @@ const OauthUserService = async (data)=>{
     // 2. Generate access and refresh tokens
     console.log('u', user)
     const payload = {
-      id:user._id.toString()
+      id: user._id.toString()
     }
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
@@ -71,13 +72,13 @@ const OauthUserService = async (data)=>{
   }
 }
 
-const OTPVerifyService = async (email, otp) =>{
+const OTPVerifyService = async (email, otp) => {
   const client = await radisClient()
   const userData = await client.get(email);
   const newUserData = JSON.parse(userData)
-  if(newUserData.otp !== otp){
+  if (newUserData.otp !== otp) {
     throw new Error('Please provide valid OTP')
-  }else{
+  } else {
     const newUser = new User(newUserData);
     const savedUser = await newUser.save();
     await client.del(email) // delete cache from radis
@@ -108,7 +109,7 @@ const loginUserService = async (data) => {
 
   const returnData = {
     accessToken,
-    user:user
+    user: user
   }
   return returnData;
 };

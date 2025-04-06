@@ -7,7 +7,7 @@ const authMiddleware = async (req, res, next) => {
     if (!token) {
       return res.status(401).json({ error: 'Unauthorized: No token provided' });
     }
-    const accessToken = token.split(' ')[1] || token; 
+    const accessToken = token.split(' ')[1] || token;
     if (!accessToken) {
       return res.status(401).json({ error: 'Unauthorized: Token format invalid' });
     }
@@ -22,6 +22,7 @@ const authMiddleware = async (req, res, next) => {
     }
     const user = await User?.findById(decoded.payload.id);
     if (!user) {
+      console.log('here', decoded)
       return res.status(404).json({ error: 'User not found' });
     }
     req.auth_user = user._id;

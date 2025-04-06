@@ -1,10 +1,11 @@
-const { createResturantService, listResturantService, restaurantDetailsService , restaurantLoginService} = require('../service/resturant.service')
+const { createResturantService, listResturantService, restaurantDetailsService, restaurantLoginService } = require('../service/resturant.service')
 const createResturant = async (req, res, next) => {
     try {
         const logo = req.file
+        const userId = req.auth_user
         const { name, email, password } = req.body
         const data = {
-            name, email, password
+            name, email, password, userId
         }
         const resp = await createResturantService(data)
         res.json({
@@ -31,8 +32,8 @@ const listResturant = async (req, res, next) => {
 
 const restaurantDetails = async (req, res, next) => {
     try {
-        const { restaurantId } = req.params
-        const resp = await restaurantDetailsService(restaurantId)
+        const { id } = req.params
+        const resp = await restaurantDetailsService(id)
         res.json({
             result: resp,
             message: 'Data Featched'
@@ -50,9 +51,9 @@ const restaurantLogin = async (req, res, next) => {
         if (!email && !password) {
             throw new Error('Please provide required fields')
         }
-        const resp = await restaurantLoginService( email, password )
+        const resp = await restaurantLoginService(email, password)
         res.json({
-            result:resp
+            result: resp
         })
     } catch (error) {
         next(error)

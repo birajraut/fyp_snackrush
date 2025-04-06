@@ -8,6 +8,8 @@ const productRoutes = require("./product");
 const userRoutes = require("./user");
 const saleRoutes = require('./sale')
 
-app.use(authRoutes, paymentRoutes, resturantRoutes,  productRoutes, userRoutes, saleRoutes)
+const adminRoutes = require('./admin')
+
+app.use(authRoutes, paymentRoutes, resturantRoutes, productRoutes, userRoutes, saleRoutes, adminRoutes)
 
 module.exports = app;
