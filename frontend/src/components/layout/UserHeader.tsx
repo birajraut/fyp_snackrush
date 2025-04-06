@@ -13,6 +13,8 @@ const UserHeader = () => {
   const { accessToken, user } = useSelector((root: IRootReducer) => root.auth);
   const cart = useSelector((state) => state.cart.cart);
 
+  // const { user: userData } = useSelector((state) => state.cart.auth);
+
   const isAuthorized = !!accessToken;
   const handleLogout = () => {
     localStorage.clear();
@@ -28,28 +30,26 @@ const UserHeader = () => {
       <nav className="bg-white shadow-md p-4 flex justify-between items-center sticky top-0 z-50">
         <h1 className="text-2xl font-semibold">SnackRush</h1>
         <div className="flex items-center gap-10">
-          {user?mainMenu?.map((item, index: number) => {
+          {user ? mainMenu?.map((item, index: number) => {
             const isActive = location?.pathname === item.link;
             return (
               <NavLink
                 to={item.link}
                 key={index}
-                className={`text-sm text-slate-700 font-semibold ${
-                  isActive && "border-b border-purple-500"
-                }`}
+                className={`text-sm text-slate-700 font-semibold ${isActive && "border-b border-purple-500"
+                  }`}
               >
                 {item.title}
               </NavLink>
             );
-          }):mainMenuRestaurantManager?.map((item, index: number) => {
+          }) : mainMenuRestaurantManager?.map((item, index: number) => {
             const isActive = location?.pathname === item.link;
             return (
               <NavLink
                 to={item.link}
                 key={index}
-                className={`text-sm text-slate-700 font-semibold ${
-                  isActive && "border-b border-purple-500"
-                }`}
+                className={`text-sm text-slate-700 font-semibold ${isActive && "border-b border-purple-500"
+                  }`}
               >
                 {item.title}
               </NavLink>
@@ -119,7 +119,7 @@ const UserHeader = () => {
                         Orders
                       </a>
                     </MenuItem>
-                 {user?._id&&   <MenuItem>
+                    {user?._id && <MenuItem>
                       <a
                         href="/profile"
                         className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
@@ -136,6 +136,23 @@ const UserHeader = () => {
                         Logout
                       </button>
                     </MenuItem>
+                    <div>
+                      {
+                        user?.restaurant?.map((item) => {
+                          return (
+                            <MenuItem>
+                              <button
+                                type="button"
+                                onClick={handleLogout}
+                                className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
+                              >
+                                {item.name}
+                              </button>
+                            </MenuItem>
+                          )
+                        })
+                      }
+                    </div>
                   </MenuItems>
                 </Menu>
               </div>

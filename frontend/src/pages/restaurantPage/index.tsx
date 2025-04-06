@@ -23,16 +23,16 @@ const RestaurantPage = () => {
 
 
   return (
-    
+
     <div className="container mx-auto p-6">
-      <Model openModel={isModalOpen} setModelOpen={setIsModalOpen} title="Create a restaurant" body={<RestaurantCreateForm setIsModalOpen={setIsModalOpen} />} icon={<LuHotel />} showIcon />
+      <Model openModel={isModalOpen} setModelOpen={setIsModalOpen} title="Request for restaurant registeration" body={<RestaurantCreateForm setIsModalOpen={setIsModalOpen} />} icon={<LuHotel />} showIcon />
 
       <div className="flex items-center justify-between bg-purple-100 p-4 rounded-md mb-10">
-      <h1 className="text-2xl font-bold text-purple-700">Restaurants</h1>
+        <h1 className="text-2xl font-bold text-purple-700">Restaurants</h1>
 
-    <div className="flex justify-end ">
-      <CustomButton type="button" onClick={() => setIsModalOpen(true)} label='Create Restaurant' icon={<CiCirclePlus />} showIcon />
-    </div>
+        <div className="flex justify-end ">
+          <CustomButton type="button" onClick={() => setIsModalOpen(true)} label='Register Your Restaurant' icon={<CiCirclePlus />} showIcon className="font-bold text-md bg-pink-500" />
+        </div>
       </div>
 
 

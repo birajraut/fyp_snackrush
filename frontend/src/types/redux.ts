@@ -1,18 +1,18 @@
-import {IUserResponse} from "./user"
+import { IUserResponse } from './user';
 
-export interface IRestaurant{
-    id:string,
-    name:string
+export type ILoginAs = 'RESTAURANT' | 'USER' | 'ADMIN';
+export interface IRestaurant {
+  id: string;
+  name: string;
 }
-export  interface IAuth {
-    accessToken:string | null
-    refreshToken :string | null
-    user:IUserResponse | null
-    restaurant:IRestaurant
+export interface IAuth {
+  accessToken: string | null;
+  refreshToken: string | null;
+  user: IUserResponse | null;
+  loginAs: ILoginAs | null;
+  restaurant: IRestaurant;
 }
 
 export interface IRootReducer {
-    auth:IAuth
-
-
+  auth: IAuth;
 }

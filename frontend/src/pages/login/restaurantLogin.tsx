@@ -3,7 +3,7 @@ import { useFormik } from 'formik';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
-import { setAccessToken, setRefreshToken, setRestaurant, setUser } from '../../redux/reducers/authSlice';
+import { setAccessToken, setLoginAs, setRefreshToken, setRestaurant, setUser } from '../../redux/reducers/authSlice';
 import { restaurantLogin } from "../../services/auth"
 
 const RestaurantLoginPage = () => {
@@ -29,7 +29,8 @@ const RestaurantLoginPage = () => {
         dispatch(setRefreshToken(response.data.result.refreshToken))
         dispatch(setUser(response.data.result?.user))
         dispatch(setRestaurant(response.data?.result?.restaurant))
-        navigate('/');
+        dispatch(setLoginAs('RESTAURANT'))
+        navigate('/restaurant');
       } catch (error: unknown) {
         if (error instanceof AxiosError) {
           setErrors({ email: error.response?.data.message || 'Invalid email or password' });
@@ -101,11 +102,11 @@ const RestaurantLoginPage = () => {
                 Login
               </button>
             </div>
-        </form>
+          </form>
         </div>
-    </div>
+      </div>
     </>
-)
+  )
 }
 
 export default RestaurantLoginPage
