@@ -1,13 +1,17 @@
 import { NavLink, useNavigate, useLocation } from "react-router-dom";
 import Button from "../../components/ui/button";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch} from "react-redux";
 import { IRootReducer } from "../../types/redux";
 import { mainMenu, mainMenuRestaurantManager } from "../../constants/menu";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import userPlaceholder from "../../assets/userPlaceholder.png";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 
+import {setLoginAs,setRestaurant } from "../../redux/reducers/authSlice"
+
+
 const UserHeader = () => {
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
   const { accessToken, user } = useSelector((root: IRootReducer) => root.auth);
@@ -24,6 +28,17 @@ const UserHeader = () => {
   const handleCart = () => {
     navigate("cart");
   };
+
+  const handleRestaurantSwitch = (restaurant)=>{
+
+    const restData = {
+      ...restaurant, 
+      id:restaurant._id
+    }
+    dispatch(setRestaurant(restData))
+    dispatch(setLoginAs('RESTAURANT'))
+    navigate('/restaurant')
+  }
 
   return (
     <>
@@ -67,27 +82,7 @@ const UserHeader = () => {
               </span>
             )}
           </MenuButton>
-          <MenuItems className="absolute right-0 mt-2 w-56 bg-white shadow-md rounded-md py-2 z-50">
-            {cart.length > 0 ? (
-              cart.map((item, index) => (
-                <MenuItem key={index}>
-                  <div className="flex justify-between items-center px-4 py-2 text-sm text-gray-700">
-                    <span>{item.name}</span>
-                    <button
-                      // onClick={() => removeFromCart(item._id)}
-                      className="text-red-500 hover:underline"
-                    >
-                      Remove
-                    </button>
-                  </div>
-                </MenuItem>
-              ))
-            ) : (
-              <MenuItem>
-                <p className="text-center text-gray-500 px-4 py-2">Cart is empty</p>
-              </MenuItem>
-            )}
-          </MenuItems>
+     
         </Menu>
 
         <div>
@@ -143,7 +138,7 @@ const UserHeader = () => {
                             <MenuItem>
                               <button
                                 type="button"
-                                onClick={handleLogout}
+                                onClick={()=>handleRestaurantSwitch(item)}
                                 className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                               >
                                 {item.name}
@@ -174,7 +169,7 @@ const UserHeader = () => {
                 </MenuItem>
                 <MenuItem>
                   <button
-                    onClick={() => navigate("/restaurantlogin")}
+                    onClick={() => navigate("/login-restaurant")}
                     className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                   >
                     Login as Restaurant Manager

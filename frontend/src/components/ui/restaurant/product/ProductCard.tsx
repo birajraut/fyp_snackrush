@@ -2,13 +2,16 @@
 import { CiEdit } from 'react-icons/ci';
 import { MdOutlineDelete } from 'react-icons/md';
 import CustomButton from '../../CustomButton';
+import { useNavigate } from "react-router-dom";
 
-import burgerImg from '../../../../assets/products/burger.png';
+import placeholder from '../../../../assets/product_placeholder.webp';
 import { twMerge } from 'tailwind-merge';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { addToCartSlice } from '../../../../redux/reducers/cartSlice';
 import { RootState } from '../../../../redux/store/store';
+import Model from '../../Model';
+import ProductForm from '../../forms/ProductForm';
 
 interface IProps {
   id: string;
@@ -22,15 +25,23 @@ interface IProps {
   restaurant?: any
 }
 const ProductCard = ({ title, description, price, id, image, subTitle, forUser = false, className, restaurant }: IProps) => {
-
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { cart } = useSelector((state: RootState) => state.cart)
   const addedItem = cart.find((item) => item._id === id)
 
   const [count, setCount] = useState<number>(0)
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
-
+const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const handleEditClick = (item) => {
+    setSelectedProduct(item)
+    console.log(item,'selected product')
+    setOpenModal(true)  
+    
+    // navigate(`/restaurant/items/${id}`)
+  }
   const handleDecrease = () => {
 
     if (count > 0) {
@@ -77,13 +88,19 @@ const ProductCard = ({ title, description, price, id, image, subTitle, forUser =
   console.log({ addedItem })
   return (
     <>
-      <div className={twMerge(` bg-white border rounded-2xl relative  ${className}`)}>
 
+<Model
+        openModel={openModal}
+        setModelOpen={setOpenModal}
+        body={<ProductForm selectedProduct={selectedProduct} setModelOpen={setOpenModal}  restaurantId={restaurant?.id} />}
+        title='Edit a Product'
+      />
+      <div className={twMerge(` bg-white border rounded-2xl relative  ${className}`)}>
 
         <div className='p-5'>
           {/* <div className='h-52 w-full'></div> */}
           <div className='w-full h-56'>
-            <img src={image || burgerImg} alt='' className='w-full h-full object-contain' />
+            <img src={image || placeholder} alt='' className='w-full h-full object-contain' />
           </div>
           <div className='flex items-center justify-between mb-5'>
             <div>
@@ -103,6 +120,7 @@ const ProductCard = ({ title, description, price, id, image, subTitle, forUser =
                 className='bg-green-600 font-semibold'
                 icon={<CiEdit />}
                 showIcon
+                onClick={()=>handleEditClick({title,price,description,image,id})}
               />
             </div>
           }

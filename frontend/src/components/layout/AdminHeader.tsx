@@ -2,6 +2,11 @@ import React from 'react';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import placeholder from '../../assets/restaurant.png'
 
+
+const handleLogout = () => {
+    localStorage.clear();
+    window.location.href = "/";
+};
 const AdminHeader = () => {
     return (
         <>
@@ -23,6 +28,7 @@ const AdminHeader = () => {
                                 <MenuItem>
                                     <button
                                         type='button'
+                                        onClick={handleLogout}
                                         className='block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:text-gray-900 data-focus:outline-hidden'
                                     >
                                         Logout

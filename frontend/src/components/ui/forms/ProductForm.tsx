@@ -1,67 +1,66 @@
 import { useState } from 'react';
 import CustomButton from '../CustomButton';
-import { useParams } from 'react-router-dom';
-import { createProduct } from '../../../services/productService';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import Input from '../Input';
 import Textarea from '../Textarea';
-import FileInput from '../FileInput';
+import { createProduct,updateProduct } from '../../../services/productService';
+import { useQueryClient } from '@tanstack/react-query';
 
-const ProductForm = ({ restaurantId, setModelOpen, onSubmit }) => {
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    price: '',
-    image: null,
-    restaurantId: restaurantId,
+const ProductForm = ({ restaurantId, setModelOpen, selectedProduct }) => {
+  const [loading, setLoading] = useState(false);
+const queryClient = useQueryClient()
+  console.log(restaurantId,'restaurant')
+  const formik = useFormik({
+    initialValues: {
+      name: selectedProduct?.title || '',
+      description: selectedProduct?.description || '',
+      price: selectedProduct?.price || '',
+      restaurant_id: restaurantId,
+    },
+    enableReinitialize: true, // ✅ Important for pre-filling on edit
+    validationSchema: Yup.object({
+      name: Yup.string().required('Required'),
+      description: Yup.string().required('Required'),
+      price: Yup.number().required('Required'),
+      restaurant_id: Yup.string().required('Required'),
+    }),
+    onSubmit: async (values) => {
+      setLoading(true);
+      try {
+        if (selectedProduct) {
+          // 🛠 Update existing product
+          await updateProduct(selectedProduct.id, values);
+          queryClient.invalidateQueries({queryKey:['restaurant-owener-product-list']})
+
+          
+        } else {
+          // ➕ Create new product
+          await createProduct(values);
+          queryClient.invalidateQueries({queryKey:['restaurant-owener-product-list']})
+
+        }
+        setModelOpen(false);
+      } catch (err) {
+        console.error('Submit error:', err);
+      } finally {
+        setLoading(false);
+      }
+    },
   });
-  const [loading, setLoading] = useState<boolean>(false);
-
-  const handleChange = (e) => {
-    const { name, value, type, files } = e.target;
-    if (type === 'file') {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: files[0],
-      }));
-    } else {
-      setFormData((prevData) => ({
-        ...prevData,
-        [name]: value,
-      }));
-    }
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    console.log(restaurantId, 'rest id');
-    const formDataToSubmit = new FormData();
-    formDataToSubmit.append('name', formData.name);
-    formDataToSubmit.append('description', formData.description);
-    formDataToSubmit.append('price', formData.price);
-    formDataToSubmit.append('restaurant_id', formData?.restaurantId);
-
-    formDataToSubmit.append('image', formData?.image as any);
-    setLoading(true);
-    const res = await createProduct(formDataToSubmit);
-    if (res) {
-      setModelOpen(false);
-
-      setLoading(false);
-    }
-    // onSubmit(formDataToSubmit);  // Calls the mutation function passed as prop
-  };
 
   return (
     <div>
-      <form onSubmit={handleSubmit} encType='multipart/form-data'>
+      <form onSubmit={formik.handleSubmit}>
         <div className='my-2'>
           <label>Name:</label>
           <Input
             type='text'
             name='name'
-            value={formData.name}
-            onChange={handleChange}
+            value={formik.values.name}
+            onChange={formik.handleChange}
             className='w-full p-2 mt-2 border rounded'
+            error={formik.touched.name && formik.errors.name}
           />
         </div>
 
@@ -69,9 +68,10 @@ const ProductForm = ({ restaurantId, setModelOpen, onSubmit }) => {
           <label>Description:</label>
           <Textarea
             name='description'
-            value={formData.description}
-            onChange={handleChange}
+            value={formik.values.description}
+            onChange={formik.handleChange}
             className='w-full p-2 mt-2 border rounded'
+            error={formik.touched.description && formik.errors.description}
           />
         </div>
 
@@ -80,26 +80,19 @@ const ProductForm = ({ restaurantId, setModelOpen, onSubmit }) => {
           <Input
             type='number'
             name='price'
-            value={formData.price}
-            onChange={handleChange}
+            value={formik.values.price}
+            onChange={formik.handleChange}
             className='w-full p-2 mt-2 border rounded'
+            error={formik.touched.price && formik.errors.price}
           />
         </div>
 
-        <div className='my-2'>
-          <label>Image:</label>
-          {/* <Input
-            type='file'
-            name='image'
-            onChange={handleChange}
-            className='w-full p-2 mt-2 border rounded'
-          /> */}
-
-          <FileInput getFile={() => { }} />
-        </div>
-
         <div className='my-2 flex justify-between'>
-          <CustomButton type='submit' label='Add Menu Item' loading={loading} />
+          <CustomButton
+            type='submit'
+            label={selectedProduct ? 'Update Menu Item' : 'Add Menu Item'}
+            loading={loading}
+          />
         </div>
       </form>
     </div>

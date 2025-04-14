@@ -10,13 +10,17 @@ const OrderPage = () => {
     const {  user } = useSelector((root: IRootReducer) => root.auth)
 
 
-    const { data: order, isLoading:isLoadingOrder, isError:isErrorOrder } = useQuery({
+    const { data: orderFromServer, isLoading:isLoadingOrder, isError:isErrorOrder } = useQuery({
         queryKey: ["orders"+user?._id],
-        queryFn: async () => listOrder(),
+        queryFn: async () =>{
+            const res= await listOrder()
+        
+        return res.data.result
+    },
       });
     
 
-console.log(order,'order fetched')
+console.log(orderFromServer,'order fetched')
 
 
     // Sample order data
@@ -53,37 +57,51 @@ console.log(order,'order fetched')
         <div className="max-w-6xl mx-auto p-6 bg-gray-100 min-h-screen">
             <h1 className="text-3xl font-semibold text-center text-gray-800 mb-8">Your Orders</h1>
 
-            {orders.length === 0 ? (
+            {orderFromServer?.length === 0 ? (
                 <p className="text-center text-lg text-gray-500">You don't have any orders yet.</p>
             ) : (
                 <div className="space-y-8">
-                    {orders.map((order) => (
-                        <div key={order.orderId} className="bg-white shadow-lg rounded-lg p-6">
+                    {orderFromServer?.map((order) => (
+                        <div key={order._id} className="bg-white shadow-lg rounded-lg p-6">
                             <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-xl font-semibold text-gray-800">Order #{order.orderId}</h2>
-                                <span className={`px-4 py-2 rounded-full text-white ${order.status === 'Delivered' ? 'bg-green-500' : 'bg-yellow-500'}`}>
-                                    {order.status}
+                                <div>
+                            <h2 className="text-xl font-semibold text-gray-800 mb-2">{order.product_id.restaurant_id.name}</h2>
+
+                                <h2 className=" font-medium text-gray-800  mb-2">Order #{order._id}</h2>
+                                </div>
+                                <span className={`px-4 py-2 rounded-full text-white ${order.payment_status === 'Delivered' ? 'bg-green-500' : 'bg-yellow-500'}`}>
+                                    {order.payment_status}
                                 </span>
+                               
                             </div>
-                            <p className="text-gray-600 mb-2">Order Date: {formatDate(order.date)}</p>
-                            <p className="text-gray-600 mb-4">Total: ${order.total}</p>
+
+                            <p className="text-gray-600 mb-2">Order Date: {formatDate(order.sale_date)}</p>
 
                             <div className="space-y-2">
-                                {order.items.map((item, index) => (
+                            <span className="text-gray-800 font-medium">{order.product_id.name}</span>
+                            <p className="text-gray-600 mb-4">Total: ${order.product_id.price * order.quantity}</p>
+
+
+                                {order?.items?.map((item, index) => (
                                     <div key={index} className="flex items-center justify-between">
-                                        <span className="text-gray-800 font-medium">{item.name}</span>
+                                        <span className="text-gray-600 font-medium">{item.name}</span>
                                         <span className="text-gray-600">x{item.quantity} - ${item.price * item.quantity}</span>
                                     </div>
                                 ))}
                             </div>
 
-                            <div className="mt-4">
-                                <button
-                                    onClick={() => navigate(`/order/${order.orderId}`)}
+                            <div className="mt-4 flex flex-row justify-between">
+                                {/* <button
+                                    onClick={() => navigate(`/order/${order._id}`)}
                                     className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none"
                                 >
                                     View Order Details
-                                </button>
+                                </button> */}
+                                <button
+                               onClick={() => navigate(`/track/${order._id}`,{ state: { order } })}
+                                                                    className="px-6 py-2 bg-orange-400 text-white rounded-lg hover:bg-orange-600 focus:outline-none"
+
+                                > Track</button> 
                             </div>
                         </div>
                     ))}

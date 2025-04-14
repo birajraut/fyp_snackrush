@@ -13,6 +13,8 @@ import LoginPage from './pages/login/index';
 import BlogPage from './pages/blog';
 
 import CartPage from './pages/cart/cart';
+import TrackProductPage from './pages/trackProduct';
+
 import CheckoutPage from './pages/checkout/checkout';
 import SuccessPage from './pages/success';
 import OrderPage from './pages/order';
@@ -68,6 +70,7 @@ const App = () => {
           <Route path='/checkout' element={<CheckoutPage />} />
           <Route path='/success' element={<SuccessPage />} />
           <Route path='/orders' element={<OrderPage />} />
+          <Route path='/track/:id' element={<TrackProductPage  />} />
 
           <Route path='/restaurants' element={<RestaurantPage />} />
           <Route path='/blog' element={<BlogPage />} />
@@ -103,29 +106,27 @@ const App = () => {
 
 
       <Route path='/restaurant' element={<UserPrivateRoute children={<RestaurantLayout />} />}>
-        <Route index element='dashboor rrr' />
+        <Route index element='Dashboard Restaurant Manager' />
         <Route path='items' element={<RestaurantItemsPage />} />
-        <Route path='orders' element='dashboor orders' />
-        <Route path='teams' element='dashboor teams' />
+        <Route path='orders' element='Dashboard Orders' />
+        <Route path='teams' element='Dashboard Teams' />
+
+        <Route path='items/:id' element='Dashboard Teams' />
+
+
       </Route>
 
 
 
       <Route path='/admin' element={<AdminPrivateRoute children={<AdminLayout />} />}>
-        <Route index element='dashboor admin' />
+        <Route index element='Dashboard Admin' />
         <Route path='restaurants' element={<AdminRestaurantPage />} />
         <Route path='restaurant/:id' element={<AdminRestaurantView />} />
       </Route>
 
       {/* AdminPrivateRoute */}
 
-
-
     </Routes>
-
-
-
-
 
   );
 };

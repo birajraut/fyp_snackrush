@@ -1,7 +1,8 @@
 export interface IRestaurantPayload {
     name:string,
     description:string,
-    logo:File | null
+    logo:File | null,
+    address:string
 }
 
 
@@ -14,4 +15,4 @@ export interface IRestaurantResponse {
     description: string;
     reviews: number; 
     __v: number;
-  }
+}

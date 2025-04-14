@@ -11,7 +11,6 @@ export const createRestaurant = async (data: IRestaurantPayload | any) => {
   }
   return authApi.post('/restaurant', formData, {
     headers: {
-      // "Content-Type": 'multipart/form-data'
       'Content-Type': 'multipart/form-data',
     },
   });

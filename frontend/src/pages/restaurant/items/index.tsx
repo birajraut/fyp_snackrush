@@ -5,17 +5,27 @@ import Model from '../../../components/ui/Model';
 import ProductCard from '../../../components/ui/restaurant/product/ProductCard';
 import ProductForm from '../../../components/ui/forms/ProductForm';
 import { useSelector } from 'react-redux';
+import { useQuery } from '@tanstack/react-query';
+import { restaurantOwnerProducts } from '../../../services/productService';
 
 const RestaurantItemsPage = () => {
   const [openModal, setOpenModal] = useState<boolean>(false);
 
   const { restaurant } = useSelector((state) => state.auth)
+
+
+  const {data} = useQuery({
+    queryKey: ['restaurant-owener-product-list', openModal],
+    queryFn:async ()=>await  restaurantOwnerProducts(restaurant?.id as string) 
+  })
+
+  console.log(data)
   return (
     <>
       <Model
         openModel={openModal}
         setModelOpen={setOpenModal}
-        body={<ProductForm restaurantId={restaurant?.id} />}
+        body={<ProductForm setModelOpen={setOpenModal}  restaurantId={restaurant?.id} />}
         title='Create a Product'
       />
       <div className='mb-10 flex items-center gap-10 justify-between'>
@@ -38,76 +48,23 @@ const RestaurantItemsPage = () => {
         </div>
       </div>
       <div className='grid grid-cols-4 gap-5'>
-        <ProductCard
-          id='1321'
-          title='King Burger'
-          description='akjdfhafd akdfjhas idfjahdfkas dfukghjaskdf sgjdhfgs jdfhgsjdfhg sjdhfgsjdfhgs djfhgsjdfhbsdfbs jdfhs jdfhgsjdf '
-          subTitle='Hot & Scicy'
-          price={250}
+        {
+          data?.data?.result?.map((item, index)=>{
+            return (
+<ProductCard 
+key={index}
+image={item.image}
+          id={item._id}
+          title={item.name}
+          description={item.description}
+          subTitle=''
+          restaurant={restaurant}
+          price={item.price}
         />
-        <ProductCard
-          id='1321'
-          title='King Burger'
-          description='akjdfhafd akdfjhas idfjahdfkas dfukghjaskdf sgjdhfgs jdfhgsjdfhg sjdhfgsjdfhgs djfhgsjdfhbsdfbs jdfhs jdfhgsjdf '
-          subTitle='Hot & Scicy'
-          price={250}
-        />
-        <ProductCard
-          id='1321'
-          title='King Burger'
-          description='akjdfhafd akdfjhas idfjahdfkas dfukghjaskdf sgjdhfgs jdfhgsjdfhg sjdhfgsjdfhgs djfhgsjdfhbsdfbs jdfhs jdfhgsjdf '
-          subTitle='Hot & Scicy'
-          price={250}
-        />
-        <ProductCard
-          id='1321'
-          title='King Burger'
-          description='akjdfhafd akdfjhas idfjahdfkas dfukghjaskdf sgjdhfgs jdfhgsjdfhg sjdhfgsjdfhgs djfhgsjdfhbsdfbs jdfhs jdfhgsjdf '
-          subTitle='Hot & Scicy'
-          price={250}
-        />
-        <ProductCard
-          id='1321'
-          title='King Burger'
-          description='akjdfhafd akdfjhas idfjahdfkas dfukghjaskdf sgjdhfgs jdfhgsjdfhg sjdhfgsjdfhgs djfhgsjdfhbsdfbs jdfhs jdfhgsjdf '
-          subTitle='Hot & Scicy'
-          price={250}
-        />
-        <ProductCard
-          id='1321'
-          title='King Burger'
-          description='akjdfhafd akdfjhas idfjahdfkas dfukghjaskdf sgjdhfgs jdfhgsjdfhg sjdhfgsjdfhgs djfhgsjdfhbsdfbs jdfhs jdfhgsjdf '
-          subTitle='Hot & Scicy'
-          price={250}
-        />
-        <ProductCard
-          id='1321'
-          title='King Burger'
-          description='akjdfhafd akdfjhas idfjahdfkas dfukghjaskdf sgjdhfgs jdfhgsjdfhg sjdhfgsjdfhgs djfhgsjdfhbsdfbs jdfhs jdfhgsjdf '
-          subTitle='Hot & Scicy'
-          price={250}
-        />
-        <ProductCard
-          id='1321'
-          title='King Burger'
-          description='akjdfhafd akdfjhas idfjahdfkas dfukghjaskdf sgjdhfgs jdfhgsjdfhg sjdhfgsjdfhgs djfhgsjdfhbsdfbs jdfhs jdfhgsjdf '
-          subTitle='Hot & Scicy'
-          price={250}
-        />
-        <ProductCard
-          id='1321'
-          title='King Burger'
-          description='akjdfhafd akdfjhas idfjahdfkas dfukghjaskdf sgjdhfgs jdfhgsjdfhg sjdhfgsjdfhgs djfhgsjdfhbsdfbs jdfhs jdfhgsjdf '
-          subTitle='Hot & Scicy'
-          price={250}
-        />
-        <ProductCard
-          id='1321'
-          title='King Burger'
-          description='akjdfhafd akdfjhas idfjahdfkas dfukghjaskdf sgjdhfgs jdfhgsjdfhg sjdhfgsjdfhgs djfhgsjdfhbsdfbs jdfhs jdfhgsjdf '
-          subTitle='Hot & Scicy'
-          price={250}
-        />
+            )
+          })
+        }
+        
       </div>
     </>
   );

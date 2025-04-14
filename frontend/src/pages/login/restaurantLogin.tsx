@@ -46,7 +46,7 @@ const RestaurantLoginPage = () => {
     <>
       <div className="flex justify-center items-center min-h-screen bg-gray-100">
         <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-lg">
-          <h2 className="text-2xl font-semibold text-center text-gray-800">Login as Restaurant </h2>
+          <h2 className="text-2xl font-semibold text-center text-gray-800">Login as Restaurant Manager</h2>
           <form onSubmit={formik.handleSubmit} className="space-y-6">
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">

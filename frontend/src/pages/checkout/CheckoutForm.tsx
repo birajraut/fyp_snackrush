@@ -167,9 +167,11 @@ const CheckoutForm = ({ submitFn }: IProps) => {
   };
 
   // Function for Cash on Delivery
-  const handleCODPayment = () => {
+  const handleCODPayment = async() => {
     // Simulate a successful payment and navigate to the order placed page
     setMessage("Order placed successfully with Cash on Delivery.");
+    await submitFn({ payment_id: null });
+
     // Navigate to the success page with the payment method
     navigate("/success", { state: { paymentMethod: "Cash on Delivery" } });
   };

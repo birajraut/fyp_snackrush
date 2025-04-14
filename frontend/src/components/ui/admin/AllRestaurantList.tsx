@@ -11,9 +11,7 @@ const AllRestaurantList = ({ restaurantList }: IProps) => {
 
     const navigate = useNavigate()
     const handleCLick = (id: string) => {
-
         navigate(`/admin/restaurant/${id}`)
-
     }
     return (
         <>
@@ -57,8 +55,6 @@ const AllRestaurantList = ({ restaurantList }: IProps) => {
                                 )
                             })
                         }
-
-
 
                     </tbody>
                 </table>
