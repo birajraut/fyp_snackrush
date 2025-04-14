@@ -7,30 +7,30 @@ const { generateAccessToken, generateRefreshToken } = require("../helper/jwt");
 
 const bcrypt = require('bcrypt')
 const createResturantService = async (data) => {
-    const { name, email, password, userId } = data
+    const { name, description, address, userId,lat,lng } = data
 
 
 
 
-    const hash = bcrypt.hashSync(password, 10)
+    // const hash = bcrypt.hashSync(password, 10)
 
     const newData = {
-        name, email, password: hash, creator: userId
+        name, description, address,lat,lng, creator: userId
     }
 
 
     const newResturant = new Restaurant(newData);
     const res = newResturant.save()
 
-    const text = `Your password is ${password}`
-    await sendEmail(email, 'Resturant login Creds,', text)
+    // const text = `Your password is ${password}`
+    // await sendEmail(email, 'Resturant login Creds,', text)
 
     return res
 }
 
 const listResturantService = async () => {
 
-    const resturant = await Restaurant.find()
+    const resturant = await Restaurant.find({status:'ACCEPTED'})
     return resturant
 }
 
@@ -38,7 +38,7 @@ const restaurantDetailsService = async (id) => {
     const details = await Restaurant.findById(id)
     console.log('dt', details)
     if (!details) {
-        throw new Error('Restaurantr not found')
+        throw new Error('Restaurant not found')
     } else {
         return details
     }
@@ -50,7 +50,7 @@ const restaurantLoginService = async (email, password) => {
 
     const restaurant = await Restaurant.findOne({ email })
     if (!restaurant) {
-        throw new Error('Restaurantr not found')
+        throw new Error('Restaurant not found')
     } else {
 
         if (restaurant?.status !== 'ACCEPTED') {

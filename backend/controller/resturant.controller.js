@@ -3,9 +3,9 @@ const createResturant = async (req, res, next) => {
     try {
         const logo = req.file
         const userId = req.auth_user
-        const { name, email, password } = req.body
+        const { name, description, address,lat,lng } = req.body
         const data = {
-            name, email, password, userId
+            name, description, address, userId,lat,lng
         }
         const resp = await createResturantService(data)
         res.json({

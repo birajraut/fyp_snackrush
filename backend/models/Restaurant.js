@@ -5,15 +5,21 @@ const RestaurantSchema = new mongoose.Schema({
   location: {
     type: String
   },
-  email: {
-    type: String,
-    unique: true,
-    required: true
-  },
-  password: {
+  address: {
     type: String,
     required: true
   },
+
+lat:{
+  type: String,
+  required: false
+},
+
+lng:{
+  type: String,
+  required: false
+},
+
   logo: { type: String },
   banner: { type: String },
   description: { type: String },

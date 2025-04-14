@@ -10,7 +10,7 @@ const userDetailsService = async (id) => {
     }
 
     // Fetch the restaurant associated with the user (via the creator field in Restaurant model)
-    const restaurant = await Restaurant.find({ creator: user._id });
+    const restaurant = await Restaurant.find({ creator: user._id, status: 'ACCEPTED' });
 
     if (!restaurant) {
         throw new Error("Restaurant not found for this user");

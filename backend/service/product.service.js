@@ -21,7 +21,15 @@ const listProductService = async (restaurantId) => {
   }
 };
 
-module.exports = { listProductService }
+
+const restaurantProductListService = async (restaurant_id)=>
+{
+
+
+  const products = await Product.find({restaurant_id})
+return products
+}
+module.exports = { listProductService, restaurantProductListService }
 
 
 // Other potential functions for future (e.g., getProduct, updateProduct)

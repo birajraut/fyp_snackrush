@@ -17,7 +17,7 @@ const SaleSchema = new mongoose.Schema({
   },
   payment_status: {
     type: String,
-    enum: ['Pending', 'Paid', 'Failed'],
+    enum: ['Pending', 'Paid', 'Failed','Cash On Delivery'],
     default: 'Pending'
   },
 

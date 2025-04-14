@@ -53,7 +53,20 @@ const getSaleService = async (userId) => {
     const user = await User.findById(userId)
     try {
         // Query the Product collection where the restaurant_id matches the given restaurantId
-        const sales = Sales.find({});
+        const sales = await Sales.find({})
+            .populate({
+                path: 'product_id',
+                populate: {
+                    path: 'restaurant_id',
+                    model: 'Restaurant'
+                }
+            })
+            .lean();
+
+        // const salesWithRestaurant = sales.map(sale => ({
+        //     ...sale,
+        //     restaurant: sale.product_id?.restaurant_id
+        // }));
         console.log(sales, 'sales from db')
         if (!sales || sales.length === 0) {
             // If no sales are found, return a custom message

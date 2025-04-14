@@ -1,5 +1,5 @@
 
-const { listProductService } = require('../service/product.service')
+const { listProductService, restaurantProductListService } = require('../service/product.service')
 const { uploadCloudinary } = require('../config/cloudinary')
 
 
@@ -39,6 +39,24 @@ const createProduct = async (req, res, next) => {
     }
 };
 
+const updateProduct = async (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const { name, description, price } = req.body;
+        const updatedProduct = await Product.findByIdAndUpdate(
+            id,
+            { name, description, price },
+            { new: true }
+        );
+        if (!updatedProduct) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+        return res.status(200).json({ message: 'Product updated successfully', product: updatedProduct });
+    } catch (error) {
+        next(error);
+    }
+};  
+
 
 const listProductController = async (req, res, next) => {
     try {
@@ -55,4 +73,19 @@ const listProductController = async (req, res, next) => {
     }
 }
 
-module.exports = { listProductController, createProduct };
+
+const restaurantProductList = async (req, res, next)=>{
+    try {
+        const {restaurant_id} = req.body
+        const response = await restaurantProductListService(restaurant_id)
+        res.json({
+            result: response
+        })
+
+    } catch (error) {
+        next(error)
+    }
+
+}
+
+module.exports = { listProductController,updateProduct, createProduct, restaurantProductList };
