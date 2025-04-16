@@ -9,6 +9,9 @@ const RestaurantSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  phone:{
+    type:String,
+  },
 
 lat:{
   type: String,
@@ -19,6 +22,7 @@ lng:{
   type: String,
   required: false
 },
+image: { type: String },
 
   logo: { type: String },
   banner: { type: String },
@@ -37,6 +41,8 @@ lng:{
     ref: 'User',
     required: true
   },
+}, {
+  timestamps: true 
 });
 
 module.exports = mongoose.model('Restaurant', RestaurantSchema);

@@ -30,7 +30,7 @@ const CartPage = () => {
 const handleCheckout=()=>{
     navigate("/checkout")
 }
-
+console.log(cart,'cart')
 
 
     return (
@@ -46,7 +46,7 @@ const handleCheckout=()=>{
                             <div className="flex items-center">
                                 <img src={item.imageUrl} alt={item.name} className="w-20 h-20 object-cover rounded-md mr-4" />
                                 <div>
-                                    <h3 className="font-semibold text-xl">{item.name}</h3>
+                                    <h3 className="font-semibold text-xl">{item.title}</h3>
                                     <p className="text-sm text-gray-600">Price: ${item.price}</p>
                                 </div>
                             </div>

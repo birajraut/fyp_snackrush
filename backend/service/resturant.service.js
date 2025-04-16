@@ -7,7 +7,7 @@ const { generateAccessToken, generateRefreshToken } = require("../helper/jwt");
 
 const bcrypt = require('bcrypt')
 const createResturantService = async (data) => {
-    const { name, description, address, userId,lat,lng } = data
+    const { name, description, address, userId,lat,lng,image,phone } = data
 
 
 
@@ -15,7 +15,7 @@ const createResturantService = async (data) => {
     // const hash = bcrypt.hashSync(password, 10)
 
     const newData = {
-        name, description, address,lat,lng, creator: userId
+        name, description, address,lat,lng,image, phone,creator: userId
     }
 
 
@@ -82,4 +82,27 @@ const restaurantLoginService = async (email, password) => {
 
 }
 
-module.exports = { createResturantService, listResturantService, restaurantDetailsService, restaurantLoginService }
+
+
+
+const restaurantDetailsOwenerService = async (id)=>{
+    return await Restaurant.findById(id)
+}
+
+const updateRestaurantImageService = async (restaurantId, imageUrl) => {
+    const updatedRestaurant = await Restaurant.findByIdAndUpdate(
+      restaurantId,
+      { image: imageUrl },
+      { new: true }
+    );
+  
+    console.log(updatedRestaurant,'updated restaurant')
+    if (!updatedRestaurant) {
+      throw new Error('Restaurant not found');
+    }
+  
+    return updatedRestaurant;
+  };
+  
+
+module.exports = { updateRestaurantImageService,createResturantService, listResturantService, restaurantDetailsService, restaurantLoginService, restaurantDetailsOwenerService }

@@ -1,6 +1,6 @@
 // import CustomButton from '../../../components/ui/CustomButton';
 import { CiEdit } from 'react-icons/ci';
-import { MdOutlineDelete } from 'react-icons/md';
+import { MdDoNotDisturbOnTotalSilence, MdOutlineDelete } from 'react-icons/md';
 import CustomButton from '../../CustomButton';
 import { useNavigate } from "react-router-dom";
 
@@ -8,7 +8,7 @@ import placeholder from '../../../../assets/product_placeholder.webp';
 import { twMerge } from 'tailwind-merge';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addToCartSlice } from '../../../../redux/reducers/cartSlice';
+import { addToCartSlice, resetCart } from '../../../../redux/reducers/cartSlice';
 import { RootState } from '../../../../redux/store/store';
 import Model from '../../Model';
 import ProductForm from '../../forms/ProductForm';
@@ -34,12 +34,12 @@ const ProductCard = ({ title, description, price, id, image, subTitle, forUser =
   const [count, setCount] = useState<number>(0)
   const [openModal, setOpenModal] = useState<boolean>(false);
 
-const [selectedProduct, setSelectedProduct] = useState<any>(null);
+  const [selectedProduct, setSelectedProduct] = useState<any>(null);
   const handleEditClick = (item) => {
     setSelectedProduct(item)
-    console.log(item,'selected product')
-    setOpenModal(true)  
-    
+    console.log(item, 'selected product')
+    setOpenModal(true)
+
     // navigate(`/restaurant/items/${id}`)
   }
   const handleDecrease = () => {
@@ -56,15 +56,38 @@ const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
   const handleCart = () => {
 
-    const item = {
-      _id: id,
-      title,
-      description,
-      price,
-      restaurant,
-      quantity: count
+    const sameRestaurantItem = cart?.some(items => items?.restaurant?.restaurant?._id == restaurant.restaurant._id)
+    console.log(sameRestaurantItem, 'same restaurant')
+    if (sameRestaurantItem || cart.length == 0) {
+
+      const item = {
+        _id: id,
+        title,
+        description,
+        price,
+        restaurant,
+        quantity: count
+      }
+      dispatch(addToCartSlice(item))
+      return
+
+    } else {
+      const confirmClearCart = window.confirm('Items from another restaurant are in the cart. Do you want to clear them and add this item?')
+      if (!confirmClearCart) {
+        return
+      }
+      dispatch(resetCart())
+      const item = {
+        _id: id,
+        title,
+        description,
+        price,
+        restaurant,
+        quantity: count
+      }
+      dispatch(addToCartSlice(item))
     }
-    dispatch(addToCartSlice(item))
+
     // setCount(0)
 
     console.log(count)
@@ -72,6 +95,11 @@ const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
 
   const btnText = () => {
+
+
+    // console.log(cart?,'cart items')
+
+
     if (!addedItem?.quantity) {
       return 'Add to cart'
     } else {
@@ -85,14 +113,14 @@ const [selectedProduct, setSelectedProduct] = useState<any>(null);
 
 
 
-  console.log({ addedItem })
+  // console.log({ addedItem })
   return (
     <>
 
-<Model
+      <Model
         openModel={openModal}
         setModelOpen={setOpenModal}
-        body={<ProductForm selectedProduct={selectedProduct} setModelOpen={setOpenModal}  restaurantId={restaurant?.id} />}
+        body={<ProductForm selectedProduct={selectedProduct} setModelOpen={setOpenModal} restaurantId={restaurant?.id} />}
         title='Edit a Product'
       />
       <div className={twMerge(` bg-white border rounded-2xl relative  ${className}`)}>
@@ -120,7 +148,7 @@ const [selectedProduct, setSelectedProduct] = useState<any>(null);
                 className='bg-green-600 font-semibold'
                 icon={<CiEdit />}
                 showIcon
-                onClick={()=>handleEditClick({title,price,description,image,id})}
+                onClick={() => handleEditClick({ title, price, description, image, id })}
               />
             </div>
           }

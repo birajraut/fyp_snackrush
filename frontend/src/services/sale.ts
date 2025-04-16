@@ -3,6 +3,6 @@ export const createSale = async  (data:any)=>{
     return authApi.post('/sale', {...data})
 }
 
-export const listOrder = async  ()=>{
-    return authApi.get('/sale')
+export const listOrder = async  (restaurant_id:string)=>{
+    return authApi.post('/restaurant/sale', {restaurant_id})
 }

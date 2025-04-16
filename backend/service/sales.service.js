@@ -2,82 +2,151 @@ const Sales = require("../models/Sales")
 const User = require("../models/User")
 const Sale = require("../models/Sales")
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const mongoose = require('mongoose');
 
 const { createStripeCustomer } = require('../stripe/customer.service');
 const { chargeCard } = require("../stripe/stripepay.service");
 
 
+const Product = require('../models/Product');
+
 const createSaleService = async (userId, paymentMethodId, products) => {
-    try {
-        const user = await User.findById(userId);
+  try {
+    const user = await User.findById(userId);
 
-        // Check if user has a Stripe customer ID, create one if not
-        let customerId = user.stripe_customer_id;
-        if (!customerId) {
-            customerId = await createStripeCustomer(user._id, user.email, user.fullName, null);
-        }
-
-        // Charge the user's card for each product
-        const chargePromises = products?.map((item) => chargeCard(customerId, paymentMethodId, item.price));
-        const chargeResponses = await Promise.all(chargePromises);
-
-        // If charging is successful, save the sale to the database
-        if (chargeResponses && chargeResponses.length === products.length) {
-            const salePromises = products?.map((item) => {
-                const saleData = new Sale({
-                    product_id: item.product_id,
-                    quantity: 1,
-                    sale_date: Date.now(),
-                    payment_status: 'Paid',
-                });
-
-                return saleData.save(); // Return the promise to be awaited
-            });
-
-            // Wait for all sale records to be saved
-            const savedSales = await Promise.all(salePromises);
-
-            return savedSales;
-        } else {
-            throw new Error('Payment failed for one or more items');
-        }
-
-    } catch (error) {
-        console.error('Error in createSaleService:', error);
-        throw new Error('An error occurred while processing the sale');
+    // Stripe customer setup
+    let customerId = user.stripe_customer_id;
+    if (!customerId) {
+      customerId = await createStripeCustomer(user._id, user.email, user.fullName, null);
     }
+
+    let totalCost = 0;
+    const saleItems = [];
+
+    for (const item of products) {
+      const product = await Product.findById(item.product_id);
+      if (!product) throw new Error(`Product not found: ${item.product_id}`);
+
+      const quantity = Math.round(item.price / product.price);
+      if (quantity < 1) throw new Error('Invalid quantity derived from price');
+
+      totalCost += item.price;
+
+      saleItems.push({
+        product_id: product._id,
+        quantity,
+        price: product.price,
+      });
+
+      // Charge per item or once for totalCost depending on your logic
+      await chargeCard(customerId, paymentMethodId, item.price);
+    }
+
+    const saleData = new Sale({
+      products: saleItems,
+      total_cost: totalCost,
+      payment_status: 'Paid',
+      user_id: userId,
+    });
+
+    const savedSale = await saleData.save();
+    return savedSale;
+
+  } catch (error) {
+    console.error('Error in createSaleService:', error);
+    throw new Error('An error occurred while processing the sale');
+  }
 };
 
+  
 
-const getSaleService = async (userId) => {
-    const user = await User.findById(userId)
-    try {
-        // Query the Product collection where the restaurant_id matches the given restaurantId
-        const sales = await Sales.find({})
-            .populate({
-                path: 'product_id',
-                populate: {
-                    path: 'restaurant_id',
-                    model: 'Restaurant'
-                }
-            })
-            .lean();
 
-        // const salesWithRestaurant = sales.map(sale => ({
-        //     ...sale,
-        //     restaurant: sale.product_id?.restaurant_id
-        // }));
-        console.log(sales, 'sales from db')
-        if (!sales || sales.length === 0) {
-            // If no sales are found, return a custom message
-            return { message: 'No sales found for this restaurant' };
+const getSaleService = async (restaurantId) => {
+
+
+
+
+    // const sales = await Sales.find({ restaurantId: restaurantId })
+
+
+
+    // const sales = await Sale.aggregate([
+    //   { $unwind: "$products" },
+    //   {
+    //     $lookup: {
+    //       from: "products", // collection name (usually lowercase plural of model)
+    //       localField: "products.product_id",
+    //       foreignField: "_id",
+    //       as: "productDetails"
+    //     }
+    //   },
+    //   { $unwind: "$productDetails" },
+    //   {
+    //     $match: {
+    //       "productDetails.restaurant_id": new mongoose.Types.ObjectId(restaurantId)
+    //     }
+    //   },
+    //   {
+    //     $group: {
+    //       _id: "$_id",
+    //       user_id: { $first: "$user_id" },
+    //       products: { $push: "$products" },
+    //       total_cost: { $first: "$total_cost" },
+    //       sale_date: { $first: "$sale_date" },
+    //       payment_status: { $first: "$payment_status" }
+    //     }
+    //   }
+    // ]);
+
+
+    const sales = await Sale.aggregate([
+      { $unwind: "$products" },
+      {
+        $lookup: {
+          from: "products",
+          localField: "products.product_id",
+          foreignField: "_id",
+          as: "productDetails"
         }
+      },
+      { $unwind: "$productDetails" },
+      {
+        $match: {
+          "productDetails.restaurant_id": new mongoose.Types.ObjectId(restaurantId)
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user_id",
+          foreignField: "_id",
+          as: "userDetails"
+        }
+      },
+      { $unwind: "$userDetails" },
+      {
+        $group: {
+          _id: "$_id",
+          user: { $first: "$userDetails" },
+          products: { 
+            $push: {
+              product: "$productDetails",
+              quantity: "$products.quantity",
+              price: "$products.price"
+            }
+          },
+          total_cost: { $first: "$total_cost" },
+          sale_date: { $first: "$sale_date" },
+          payment_status: { $first: "$payment_status" }
+        }
+      }
+    ]);
 
-        return sales; // Return the list of sales found for the restaurant
-    } catch (error) {
-        // Handle any errors that occur during the database query
-        throw new Error('Error fetching sales: ' + error.message);
-    }
+
+    console.log('sales', sales)
+
+    return sales
+   
 }
 
 module.exports = { createSaleService, getSaleService }

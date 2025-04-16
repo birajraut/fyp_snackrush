@@ -46,11 +46,11 @@ const TrackProductPage = () => {
   const deliveryMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const dummyUpdateIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const [productLocation, setProductLocation] = useState<Coordinates | null>([order?.product_id?.restaurant_id?.lng, order?.product_id?.restaurant_id?.lat]);
+  const [productLocation, setProductLocation] = useState<Coordinates | null>([order?.products[0]?.product_id?.restaurant_id?.lng, order?.products[0]?.product_id?.restaurant_id?.lat]);
   const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
   const [deliveryLocation, setDeliveryLocation] = useState<Coordinates | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
-console.log(order.product_id.restaurant_id,'passed data')
+console.log(order,'passed data')
   // 1. Get user's location from browser
   useEffect(() => {
     if (!navigator.geolocation) {

@@ -27,6 +27,8 @@ const RestaurantDetail = () => {
     return 'Error fetching restaurant'
   }
 
+
+  console.log(restaurant,'restaurant data')
   return (
     <div>
       <div className="relative w-full h-[450px] bg-white">
@@ -45,13 +47,13 @@ const RestaurantDetail = () => {
                   <div>
                     <GoLocation />
                   </div>
-                  <div>asdfkajdasdfad afa</div>
+                  <div>{restaurantData.address||"N/A"}</div>
                 </li>
                 <li className="flex items-center gap-5">
                   <div>
                     <CiPhone />
                   </div>
-                  <div>65151515414541</div>
+                  <div>{restaurantData?.phone||'N/A'}</div>
                 </li>
               </ul>
             </div>
@@ -80,7 +82,7 @@ const RestaurantDetail = () => {
                   return (
                     <div key={index}>
                       <ProductCard
-
+restaurant={product}
                         id={product._id}
                         title={product.name}
                         description={product.description}

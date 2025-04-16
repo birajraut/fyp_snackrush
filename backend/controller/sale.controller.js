@@ -9,25 +9,24 @@ const createSale = async (req, res, next)=>{
         const {payment_id, products} = req.body || {}
 
 
-        if(!payment_id){
-  const salePromises = products?.map((item) => {
-                const saleData = new Sales({
-                    product_id: item.product_id,
-                    quantity: 1,
-                    sale_date: Date.now(),
-                    payment_status: 'Cash On Delivery',
-                });
-
-                return saleData.save(); // Return the promise to be awaited
-            });
-            const savedSales = await Promise.all(salePromises);
+        if (!payment_id) {
+            const totalCost = products?.reduce((sum, item) => sum + item.price * item.quantity, 0);
           
-            res.json({
-                result:savedSales
-            })
-            // return savedSales;
-
-        }else{
+            const saleData = new Sales({
+              products: products.map(item => ({
+                product_id: item.product_id,
+                quantity: item.quantity,
+                price: item.price
+              })),
+              total_cost: totalCost,
+              payment_status: 'Cash On Delivery',
+              user_id: userId
+            });
+          
+            const savedSale = await saleData.save();
+          
+            res.json({ result: savedSale });
+          }else{
             const resp = await createSaleService(userId,payment_id,products)
             res.json({
                 result:resp
@@ -40,8 +39,9 @@ const createSale = async (req, res, next)=>{
 }
 const getSale = async (req, res, next)=>{
     try {
-        const userId = req.auth_user
-        const resp = await getSaleService(userId)
+
+        const {restaurant_id} = req.body || {}
+        const resp = await getSaleService(restaurant_id)
         res.json({
             result:resp
         })

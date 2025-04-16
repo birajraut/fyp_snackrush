@@ -27,3 +27,14 @@ export const resturantDetailsFn = async (id: string) => {
 export const resturantUpdateAdmin = async (data: any) => {
   return authApi.post(`/admin/restaurant-update`, { ...data });
 };
+
+export const updateRestaurantImage = async (id: string, imageFile: File) => {
+  const formData = new FormData();
+  formData.append('image', imageFile);
+
+  return authApi.put(`/restaurant/${id}/image`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+};

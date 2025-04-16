@@ -2,6 +2,7 @@ import CustomButton from "../CustomButton"
 import { LuEye } from "react-icons/lu";
 import { RestaurantViewForm } from "../forms/restaurantViewForm";
 import { useNavigate } from "react-router-dom";
+import moment from "moment"
 
 interface IProps {
     restaurantList: any
@@ -46,7 +47,7 @@ const AllRestaurantList = ({ restaurantList }: IProps) => {
                                         <td className="py-5">
                                             <button type="button" className="bg-green-100 text-xs text-green py-2 px-6 rounded-full capitalize">{item.status?.toLowerCase()}</button>
                                         </td>
-                                        <td className="py-5">Malcolm Lockyer</td>
+                                        <td className="py-5">{ item.createdAt && moment(item.createdAt).startOf('hour').fromNow()}</td>
                                         <td className="py-5">
 
                                             <CustomButton icon={<LuEye />} showIcon type="button" onClick={() => handleCLick(item._id)} label={'View'} />

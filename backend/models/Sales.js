@@ -1,15 +1,31 @@
 const mongoose = require('mongoose');
 
 const SaleSchema = new mongoose.Schema({
-  product_id: {
-    type: mongoose.Schema.Types.ObjectId, 
-    ref: 'Product',
+  user_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
     required: true
   },
-  quantity: {
+  products: [
+    {
+      product_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
+        required: true
+      },
+      quantity: {
+        type: Number,
+        required: true
+      },
+      price: {
+        type: Number, // unit price
+        required: true
+      }
+    }
+  ],
+  total_cost: {
     type: Number,
-    required: true,
-    min: [1, 'Quantity must be at least 1']
+    required: true
   },
   sale_date: {
     type: Date,
@@ -19,10 +35,7 @@ const SaleSchema = new mongoose.Schema({
     type: String,
     enum: ['Pending', 'Paid', 'Failed','Cash On Delivery'],
     default: 'Pending'
-  },
-
-
+  }
 });
 
 module.exports = mongoose.model('Sale', SaleSchema);
-

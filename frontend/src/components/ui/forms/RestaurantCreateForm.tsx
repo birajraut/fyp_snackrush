@@ -16,6 +16,7 @@ import Model from '../Model';
 import MapComponent from '../../map/Map';
 import React from 'react';
 
+
 // Initialize Mapbox
 mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN as string;
 
@@ -26,9 +27,11 @@ interface IProps {
 interface FormValues {
     name: string;
     description: string;
+    phone: number;
     address: string;
     latitude?: number;
     longitude?: number;
+    image: File | null;
 }
 
 const RestaurantCreateForm = ({ setIsModalOpen }: IProps) => {
@@ -131,14 +134,17 @@ const RestaurantCreateForm = ({ setIsModalOpen }: IProps) => {
         initialValues: {
             name: '',
             description: '',
+            phone: 0,
             address: selectedLocation?.address || '',
             latitude: undefined,
             longitude: undefined,
+            image: null
         },
         validateOnChange: false,
         validationSchema: Yup.object({
             name: Yup.string().required('Name is required.'),
             description: Yup.string().required('Restaurant Description cannot be empty.'),
+            phone: Yup.number().required('Phone number is required.'),
             address: Yup.string().required('Address is required.'),
             latitude: Yup.number().required('Please select a valid address from the suggestions'),
             longitude: Yup.number().required('Please select a valid address from the suggestions'),
@@ -154,9 +160,11 @@ const RestaurantCreateForm = ({ setIsModalOpen }: IProps) => {
                 await createRestaurant({
                     name: values.name,
                     description: values.description,
+                    phone: values.phone,
                     address: values.address,
                     lat: values.latitude,
                     lng: values.longitude,
+                    image: values.image,
                 });
                 setIsModalOpen(false);
                 toast.success('Request sent successfully. You will be notified after the request is accepted.');
@@ -188,6 +196,16 @@ const RestaurantCreateForm = ({ setIsModalOpen }: IProps) => {
                     label="Restaurant Description" 
                     error={formik.errors.description} 
                 />
+
+                <Textarea 
+                    name="phone number" 
+                    placeholder="phone number" 
+                    onChange={formik.handleChange} 
+                    label="Phone Number" 
+                    error={formik.errors.phone} 
+                />
+
+                {/* <FileInput getFile={(file)=> formik.setValues({...formik.values, image: file})} /> */}
 
                 <div className="relative">
                     <label className="block text-sm font-medium text-gray-700 mb-1">

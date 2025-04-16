@@ -42,11 +42,11 @@ export const mainMenuRestaurantManager = [
 ];
 
 export const restaurantMenu = [
-  {
-    link: '/',
-    title: 'Dashboard',
-    icon: <RxDashboard />,
-  },
+  // {
+  //   link: '/',
+  //   title: 'Dashboard',
+  //   icon: <RxDashboard />,
+  // },
 
   {
     link: '/items',
@@ -65,11 +65,11 @@ export const restaurantMenu = [
   //     title: 'Delevaries',
   //     icon: <RxLapTimer />,
   //   },
-  {
-    link: '/teams',
-    title: 'Teams',
-    icon: <RxPerson />,
-  },
+  // {
+  //   link: '/teams',
+  //   title: 'Teams',
+  //   icon: <RxPerson />,
+  // },
   //   {
   //     link: '/revenue',
   //     title: 'Revenue',

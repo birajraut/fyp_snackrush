@@ -36,7 +36,7 @@ const OauthUserService = async (data) => {
     // 1. Check if the user already exists based on the data (e.g., email)
     let user = await User.findOne({ email: data.email });
 
-    console.log('al yser', user)
+    console.log('al google', data)
 
     // If the user is not found, register the user
     if (!user) {

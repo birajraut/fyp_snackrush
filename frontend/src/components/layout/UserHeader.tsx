@@ -73,17 +73,14 @@ const UserHeader = () => {
         </div>
 
         {/* Shopping Cart */}
-        <Menu as="div" className="relative" onClick={() => handleCart()}>
-          <MenuButton className="relative flex items-center">
-            <AiOutlineShoppingCart className="text-2xl text-gray-700" />
-            {cart.length > 0 && (
-              <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-                {cart.length}
-              </span>
-            )}
-          </MenuButton>
-     
-        </Menu>
+        <div className="relative cursor-pointer" onClick={handleCart}>
+  <AiOutlineShoppingCart className="text-2xl text-gray-700" />
+  {cart.length > 0 && (
+    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+      {cart.length}
+    </span>
+  )}
+</div>
 
         <div>
           {isAuthorized ? (
@@ -106,7 +103,9 @@ const UserHeader = () => {
                     transition
                     className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 ring-1 shadow-lg ring-black/5 transition focus:outline-hidden data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in"
                   >
-                    <MenuItem>
+                    <MenuItem
+                    
+                    >
                       <a
                         href="/orders"
                         className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
@@ -114,7 +113,7 @@ const UserHeader = () => {
                         Orders
                       </a>
                     </MenuItem>
-                    {user?._id && <MenuItem>
+                    { <MenuItem>
                       <a
                         href="/profile"
                         className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"

@@ -108,7 +108,9 @@ const App = () => {
       <Route path='/restaurant' element={<UserPrivateRoute children={<RestaurantLayout />} />}>
         <Route index element='Dashboard Restaurant Manager' />
         <Route path='items' element={<RestaurantItemsPage />} />
-        <Route path='orders' element='Dashboard Orders' />
+        <Route path='profile' element={<ProfilePage/> }/>
+        <Route path='orders' element={<OrderPage />} />
+
         <Route path='teams' element='Dashboard Teams' />
 
         <Route path='items/:id' element='Dashboard Teams' />
