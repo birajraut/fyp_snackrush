@@ -5,6 +5,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { getProductLocation } from '../../services/productService';
 import { useSocket } from '../../hooks/useSocket';
 import { useLocation, useParams } from 'react-router';
+import { resturantDetailsFn } from '../../services/restaurant';
 
 // Types
 type Coordinates = [number, number];
@@ -46,14 +47,26 @@ const TrackProductPage = () => {
   const deliveryMarkerRef = useRef<mapboxgl.Marker | null>(null);
   const dummyUpdateIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
-  const [productLocation, setProductLocation] = useState<Coordinates | null>([order?.products[0]?.product_id?.restaurant_id?.lng, order?.products[0]?.product_id?.restaurant_id?.lat]);
+  const [productLocation, setProductLocation] = useState<Coordinates | null>([0,0]);
   const [userLocation, setUserLocation] = useState<Coordinates | null>(null);
   const [deliveryLocation, setDeliveryLocation] = useState<Coordinates | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
 console.log(order,'passed data')
+
+
+const getRestaurantLocation=async()=>{
+  const restaurantDetails= await resturantDetailsFn(order?.products[0]?.product?.restaurant_id)
+  console.log(restaurantDetails,'restaurant details')
+  const Details=restaurantDetails.data.result
+if (restaurantDetails.data.result) {
+setProductLocation([Details?.lng, Details?.lat])
+
+}
+}
   // 1. Get user's location from browser
   useEffect(() => {
     if (!navigator.geolocation) {
+
       setLocationError('Geolocation is not supported by your browser');
       setUserLocation(FALLBACK_USER_LOCATION);
       return;
@@ -82,7 +95,9 @@ console.log(order,'passed data')
       navigator.geolocation.clearWatch(watchId);
     };
   }, []);
-
+  useEffect(() => {
+    getRestaurantLocation()
+  },[order])
   // 2. Socket implementation (commented out - uncomment when backend is ready)
   /*
   useEffect(() => {

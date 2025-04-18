@@ -14,7 +14,8 @@ const OrderPage = () => {
   const { data: orderFromServer, isLoading: isLoadingOrder, isError: isErrorOrder } = useQuery({
     queryKey: ['orders', user?._id],
     queryFn: async () => {
-      const res = await listOrder(restaurant?._id);
+     const isNormalUser= pathname !== '/restaurant/orders' 
+      const res = await listOrder(isNormalUser?{user_id:user?._id}:{restaurant_id:restaurant?._id});
       if (res?.data?.result?.message) {
         return null;
       } else {

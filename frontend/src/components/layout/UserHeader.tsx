@@ -163,17 +163,17 @@ const UserHeader = () => {
                     onClick={() => navigate("/login")}
                     className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                   >
-                    Login as Admin
+                    Login
                   </button>
                 </MenuItem>
-                <MenuItem>
+                {/* <MenuItem>
                   <button
                     onClick={() => navigate("/login-restaurant")}
                     className="block px-4 py-2 text-sm text-gray-700 data-focus:bg-gray-100 data-focus:outline-hidden"
                   >
                     Login as Restaurant Manager
                   </button>
-                </MenuItem>
+                </MenuItem> */}
                 <MenuItem>
                   <button
                     onClick={() => navigate("/register")}

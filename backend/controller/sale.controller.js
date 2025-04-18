@@ -32,19 +32,26 @@ const createSale = async (req, res, next)=>{
                 result:resp
             })
         }
-      
     } catch (error) {
         next(error)
     }
 }
 const getSale = async (req, res, next)=>{
     try {
-
         const {restaurant_id} = req.body || {}
-        const resp = await getSaleService(restaurant_id)
-        res.json({
-            result:resp
-        })
+        const user_id= req?.body?.user_id
+        if(user_id){
+            const resp = await getSaleService({user_id:user_id})
+            res.json({
+                result:resp
+            })
+        }else{
+            const resp = await getSaleService({restaurant_id:restaurant_id})
+            res.json({
+                result:resp
+            })
+        }
+       
     } catch (error) {
         next(error)
     }

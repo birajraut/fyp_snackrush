@@ -11,7 +11,7 @@ router.route('/sale')
 .post(authMiddleware, createSale)
 
 router.route('/restaurant/sale')
-.post(authMiddleware,isRestaurant,   getSale)
+.post(authMiddleware,  getSale)
 
 
 

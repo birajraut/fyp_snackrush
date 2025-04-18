@@ -61,10 +61,18 @@ const createSaleService = async (userId, paymentMethodId, products) => {
   
 
 
-const getSaleService = async (restaurantId) => {
+const getSaleService = async ({user_id,restaurant_id:restaurantId}) => {
 
 
+  const matchCriteria = {};
+  if (restaurantId) {
+    matchCriteria["productDetails.restaurant_id"] = new mongoose.Types.ObjectId(restaurantId);
+  }
 
+  // If userId is provided, add filtering for it
+  if (user_id) {
+    matchCriteria["user_id"] = new mongoose.Types.ObjectId(user_id);
+  }
 
     // const sales = await Sales.find({ restaurantId: restaurantId })
 
@@ -111,9 +119,8 @@ const getSaleService = async (restaurantId) => {
       },
       { $unwind: "$productDetails" },
       {
-        $match: {
-          "productDetails.restaurant_id": new mongoose.Types.ObjectId(restaurantId)
-        }
+        $match: matchCriteria // Apply dynamic filtering criteria
+
       },
       {
         $lookup: {
