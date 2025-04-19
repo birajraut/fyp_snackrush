@@ -4,33 +4,28 @@ const Sales = require("../models/Sales");
 const Product = require("../models/Product");
 
 const userDetailsService = async (id) => {
-    // Fetch the user by their ID
     const user = await User.findById(id);
 
     if (!user) {
         throw new Error("User not found");
     }
 
-    // Fetch the restaurant associated with the user (via the creator field in Restaurant model)
     const restaurant = await Restaurant.find({ creator: user._id, status: 'ACCEPTED' });
 
     if (!restaurant) {
         throw new Error("Restaurant not found for this user");
     }
 
-    // Return both user and restaurant
     return { user, restaurant };
 }
 
 const userOrderDetailsService = async (id) => {
-    // Fetch orders for the user
     const orders = await Sales.find({ user_id: id });
 
     if (!orders || orders.length === 0) {
         throw new Error("No orders found for this user");
     }
 
-    // Fetch detailed product and restaurant information for each order
     const refinedOrders = await Promise.all(
         orders.map(async (order) => {
             const refinedProducts = await Promise.all(
@@ -45,7 +40,6 @@ const userOrderDetailsService = async (id) => {
                         throw new Error("Restaurant not found for this product");
                     }
 
-                    // Return refined product details
                     return {
                         product_id: productItem.product_id,
                         quantity: productItem.quantity,
@@ -72,7 +66,6 @@ const userOrderDetailsService = async (id) => {
                 })
             );
 
-            // Return refined order details
             return {
                 _id: order._id,
                 user_id: order.user_id,
@@ -87,4 +80,10 @@ const userOrderDetailsService = async (id) => {
     return refinedOrders;
 };
 
-module.exports = { userDetailsService, userOrderDetailsService };
+const totalUsersService = async () => {
+    const totalUsers = await User.find();
+    return totalUsers;
+};
+
+module.exports = { userDetailsService, userOrderDetailsService, totalUsersService };
+
