@@ -119,7 +119,7 @@ import placeholder from "../../assets/restaurantPlaceholder.png";
 import { listProduct } from "../../services/productService";
 import { GoLocation } from "react-icons/go";
 import { CiPhone } from "react-icons/ci";
-import { addToCart, removeFromCart } from "../../redux/reducers/cartSlice";
+import { addToCart, removeFromCart, resetCart } from "../../redux/reducers/cartSlice";
 
 const RestaurantDetail = () => {
   const { id } = useParams<{ id: string }>();
@@ -162,6 +162,24 @@ const RestaurantDetail = () => {
   };
 
   const handleAdd = (product) => {
+    if (cart.length > 0) {
+      // Check if all items in the cart are from the same restaurant
+      const sameRestaurant = cart[0]?.restaurant?._id === product?.restaurant?._id;
+  
+      if (!sameRestaurant) {
+        // Alert the user if the cart contains items from a different restaurant
+        const confirmClearCart = window.confirm(
+          "Your cart contains items from another restaurant. Do you want to clear the cart and add this item?"
+        );
+        if (!confirmClearCart) {
+          return; // Do nothing if the user cancels
+        }
+        // Clear the cart if the user confirms
+        dispatch(resetCart());
+      }
+    }
+  
+    // Add the product to the cart
     dispatch(addToCart({ ...product, quantity: 1 }));
   };
 

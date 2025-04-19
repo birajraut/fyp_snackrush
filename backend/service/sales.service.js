@@ -1,19 +1,16 @@
-const Sales = require("../models/Sales")
-const User = require("../models/User")
-const Sale = require("../models/Sales")
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const mongoose = require('mongoose');
+const Sales = require("../models/Sales");
+const User = require("../models/User");
+const Product = require("../models/Product");
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const mongoose = require("mongoose");
 
-const { createStripeCustomer } = require('../stripe/customer.service');
+const { createStripeCustomer } = require("../stripe/customer.service");
 const { chargeCard } = require("../stripe/stripepay.service");
 
-
-const Product = require('../models/Product');
-
-const createSaleService = async (userId, paymentMethodId, products) => {
+const createSaleService = async (userId, restaurantId, paymentMethodId, products) => {
   try {
     const user = await User.findById(userId);
-
+console.log("products found:", products);
     // Stripe customer setup
     let customerId = user.stripe_customer_id;
     if (!customerId) {
@@ -28,7 +25,7 @@ const createSaleService = async (userId, paymentMethodId, products) => {
       if (!product) throw new Error(`Product not found: ${item.product_id}`);
 
       const quantity = Math.round(item.price / product.price);
-      if (quantity < 1) throw new Error('Invalid quantity derived from price');
+      if (quantity < 1) throw new Error("Invalid quantity derived from price");
 
       totalCost += item.price;
 
@@ -42,111 +39,82 @@ const createSaleService = async (userId, paymentMethodId, products) => {
       await chargeCard(customerId, paymentMethodId, item.price);
     }
 
-    const saleData = new Sale({
+    const saleData = new Sales({
       products: saleItems,
       total_cost: totalCost,
-      payment_status: 'Paid',
+      payment_status: "Paid",
       user_id: userId,
+      restaurant_id: restaurantId, // Include restaurant_id
     });
 
     const savedSale = await saleData.save();
     return savedSale;
-
   } catch (error) {
-    console.error('Error in createSaleService:', error);
-    throw new Error('An error occurred while processing the sale');
+    console.error("Error in createSaleService:", error);
+    throw new Error("An error occurred while processing the sale");
   }
 };
 
-  
 
+const getSaleService = async (filterCriteria) => {
+  try {
+    const matchCriteria = {};
 
-const getSaleService = async (restaurantId) => {
+    // Add filtering for user_id or restaurant_id if provided
+    if (filterCriteria?.user_id) {
+      matchCriteria.user_id = new mongoose.Types.ObjectId(filterCriteria?.user_id);
+    }
+    if (filterCriteria?.restaurant_id) {
+      matchCriteria.restaurant_id = new mongoose.Types.ObjectId(filterCriteria?.restaurant_id);
+    }
 
+    const sales = await Sales.aggregate([
+      { $unwind: "$products" },
+      {
+        $lookup: {
+          from: "products", // collection name (usually lowercase plural of model)
+          localField: "products.product_id",
+          foreignField: "_id",
+          as: "productDetails",
+        },
+      },
+      { $unwind: "$productDetails" },
+      {
+        $match: matchCriteria, // Apply dynamic filtering criteria
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "user_id",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+      { $unwind: "$userDetails" },
+      {
+        $group: {
+          _id: "$_id",
+          user: { $first: "$userDetails" },
+          restaurant_id: { $first: "$restaurant_id" },
+          products: {
+            $push: {
+              product: "$productDetails",
+              quantity: "$products.quantity",
+              price: "$products.price",
+            },
+          },
+          total_cost: { $first: "$total_cost" },
+          sale_date: { $first: "$sale_date" },
+          payment_status: { $first: "$payment_status" },
+        },
+      },
+    ]);
 
+    return sales;
+  } catch (error) {
+    console.error("Error in getSaleService:", error);
+    throw new Error("An error occurred while fetching sales");
+  }
+};
 
-
-
-    const sales = await Sales.find().populate('product_id').lean()
-
-
-
-    // const sales = await Sale.aggregate([
-    //   { $unwind: "$products" },
-    //   {
-    //     $lookup: {
-    //       from: "products", // collection name (usually lowercase plural of model)
-    //       localField: "products.product_id",
-    //       foreignField: "_id",
-    //       as: "productDetails"
-    //     }
-    //   },
-    //   { $unwind: "$productDetails" },
-    //   {
-    //     $match: {
-    //       "productDetails.restaurant_id": new mongoose.Types.ObjectId(restaurantId)
-    //     }
-    //   },
-    //   {
-    //     $group: {
-    //       _id: "$_id",
-    //       user_id: { $first: "$user_id" },
-    //       products: { $push: "$products" },
-    //       total_cost: { $first: "$total_cost" },
-    //       sale_date: { $first: "$sale_date" },
-    //       payment_status: { $first: "$payment_status" }
-    //     }
-    //   }
-    // ]);
-
-
-    // const sales = await Sale.aggregate([
-    //   { $unwind: "$products" },
-    //   {
-    //     $lookup: {
-    //       from: "products",
-    //       localField: "products.product_id",
-    //       foreignField: "_id",
-    //       as: "productDetails"
-    //     }
-    //   },
-    //   { $unwind: "$productDetails" },
-    //   {
-    //     $match: matchCriteria // Apply dynamic filtering criteria
-
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: "users",
-    //       localField: "user_id",
-    //       foreignField: "_id",
-    //       as: "userDetails"
-    //     }
-    //   },
-    //   { $unwind: "$userDetails" },
-    //   {
-    //     $group: {
-    //       _id: "$_id",
-    //       user: { $first: "$userDetails" },
-    //       products: { 
-    //         $push: {
-    //           product: "$productDetails",
-    //           quantity: "$products.quantity",
-    //           price: "$products.price"
-    //         }
-    //       },
-    //       total_cost: { $first: "$total_cost" },
-    //       sale_date: { $first: "$sale_date" },
-    //       payment_status: { $first: "$payment_status" }
-    //     }
-    //   }
-    // ]);
-
-
-    console.log('sales', sales)
-
-    return sales
-   
-}
-
-module.exports = { createSaleService, getSaleService }
+module.exports = { createSaleService, getSaleService };

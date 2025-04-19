@@ -192,7 +192,7 @@ import placeholder from '../../../../assets/product_placeholder.webp';
 import { twMerge } from 'tailwind-merge';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addToCart, removeFromCart } from '../../../../redux/reducers/cartSlice';
+import { addToCart, removeFromCart, resetCart } from '../../../../redux/reducers/cartSlice';
 import { RootState } from '../../../../redux/store/store';
 import Model from '../../Model';
 import ProductForm from '../../forms/ProductForm';
@@ -229,10 +229,8 @@ const ProductCard = ({ title, description, price, id, image, subTitle, forUser =
       dispatch(removeFromCart(id));
     }
   };
+  const handleIncrease = () => {};
 
-  const handleIncrease = () => {
-    dispatch(addToCart({ _id: id, name: title, description, price, image, restaurant, quantity: 1 }));
-  };
 
   return (
     <>
