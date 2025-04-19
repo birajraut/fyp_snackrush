@@ -8,6 +8,7 @@ const createResturant = async (req, res, next) => {
         const logo = req.file
         const userId = req.auth_user
         const { name, description, address,lat,lng, phone} = req.body
+        console.log('req body', req.body)
         const image = req.file ? req.file.buffer : ''; // Assuming image is uploaded using multer
         let logoUrl = ''
         if (image) {

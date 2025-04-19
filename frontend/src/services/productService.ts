@@ -18,12 +18,36 @@ export const listProduct = async (id: string) => {
 };
 
 export const createProduct = async (data: any) => {
+  const formData = new FormData();
+  for (const key in data) {
+    if (data[key] instanceof File) {
+      formData.append(key, data[key]);
+    } else {
+      formData.append(key, data[key]);
+    }
+  }
 
-  return await authApi.post('product', {...data});
+  return await authApi.post('product', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
+
 };
-
 export const updateProduct = async (id:string,data: any) => {
-  return await authApi.put(`product/${id}`, {...data});
+  const formData = new FormData();
+  for (const key in data) {
+    if (data[key] instanceof File) {
+      formData.append(key, data[key]);
+    } else {
+      formData.append(key, data[key]);
+    }
+  }
+  return await authApi.put(`product/${id}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    },
+  });
 };
 
 

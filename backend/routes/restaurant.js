@@ -11,7 +11,7 @@ const upload = require('../middleware/uploader')
 
 
 router.route('/restaurant')
-    .post(authMiddleware, upload.single('logo'), createResturant)
+    .post(authMiddleware, upload.single('image'), createResturant)
     .get(listResturant)
     
     router.route('/restaurant/:restaurantId/image')

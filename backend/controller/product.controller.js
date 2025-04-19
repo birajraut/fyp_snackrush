@@ -43,9 +43,17 @@ const updateProduct = async (req, res, next) => {
     try {
         const { id } = req.params;
         const { name, description, price } = req.body;
+        const image = req.file ? req.file.buffer : ''; // Assuming image is uploaded using multer
+        let logoUrl = ''
+        if (image) {
+            const uploadCloud = await uploadCloudinary(image)
+            logoUrl = uploadCloud?.url
+        }
         const updatedProduct = await Product.findByIdAndUpdate(
             id,
-            { name, description, price },
+            { name, description, price,      
+                      image: logoUrl
+            },
             { new: true }
         );
         if (!updatedProduct) {

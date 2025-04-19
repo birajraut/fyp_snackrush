@@ -10,7 +10,7 @@ const createResturantService = async (data) => {
     const { name, description, address, userId,lat,lng,image,phone } = data
 
 
-
+console.log('data and name and address', data)
 
     // const hash = bcrypt.hashSync(password, 10)
 

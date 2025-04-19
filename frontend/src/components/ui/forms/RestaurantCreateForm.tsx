@@ -205,7 +205,7 @@ const RestaurantCreateForm = ({ setIsModalOpen }: IProps) => {
                     error={formik.errors.phone} 
                 />
 
-                {/* <FileInput getFile={(file)=> formik.setValues({...formik.values, image: file})} /> */}
+                <FileInput getFile={(file)=> formik.setValues({...formik.values, image: file})} />
 
                 <div className="relative">
                     <label className="block text-sm font-medium text-gray-700 mb-1">

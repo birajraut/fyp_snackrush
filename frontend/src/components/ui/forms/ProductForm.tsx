@@ -17,6 +17,8 @@ const queryClient = useQueryClient()
       description: selectedProduct?.description || '',
       price: selectedProduct?.price || '',
       restaurant_id: restaurantId,
+      image: null
+
     },
     enableReinitialize: true, // ✅ Important for pre-filling on edit
     validationSchema: Yup.object({
@@ -25,8 +27,16 @@ const queryClient = useQueryClient()
       price: Yup.number().required('Required'),
       restaurant_id: Yup.string().required('Required'),
     }),
+
     onSubmit: async (values) => {
       setLoading(true);
+
+
+
+
+
+
+      
       try {
         if (selectedProduct) {
           // 🛠 Update existing product
@@ -48,6 +58,8 @@ const queryClient = useQueryClient()
       }
     },
   });
+
+  console.log(restaurantId,'restaurantId')
 
   return (
     <div>
@@ -86,6 +98,24 @@ const queryClient = useQueryClient()
             error={formik.touched.price && formik.errors.price}
           />
         </div>
+
+  {/* Image Picker */}
+  <div className='my-2'>
+    <label>Image:</label>
+    <input
+      type='file'
+      accept='image/*'
+      onChange={(event) => {
+        const file = event.currentTarget.files?.[0];
+        if (file) {
+          formik.setFieldValue('image', file);
+        }
+      }}
+      className='w-full p-2 mt-2 border rounded'
+    />
+  </div>
+
+
 
         <div className='my-2 flex justify-between'>
           <CustomButton
