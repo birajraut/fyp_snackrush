@@ -86,7 +86,6 @@ const OTPVerifyService = async (email, otp) => {
   }
 
 }
-
 const loginUserService = async (data) => {
   const { email, password } = data;
   // password hash
@@ -114,6 +113,43 @@ const loginUserService = async (data) => {
   return returnData;
 };
 
+
+const resetPasswordService = async ({ email, otp, newPassword }) => {
+  const user = await User.findOne({
+    email
+  });
+  if (!user) {
+    throw new Error("User Not Found");
+  }
+  const client = await radisClient()
+  const userData = await client.get(email);
+  const newUserData = JSON.parse(userData)
+  if (newUserData.otp !== otp) {
+    throw new Error('Please provide valid OTP')
+  } else {
+    const hash = bcrypt.hashSync(newPassword, 10);
+    user.password = hash;
+    await user.save();
+    await client.del(email) // delete cache from radis
+    return 'Password reset successfully';
+  }
+}
+
+
+
+const forgotPasswordService = async (email) => {
+  const user = await User.findOne({
+    email
+  });
+  if (!user) {
+    throw new Error("User Not Found");
+  }
+  const otp = generateOTP(6)
+  await sendEmail(email, 'otp', otp)
+  const client = await radisClient()
+  client.set(email, JSON.stringify({ otp: otp }))
+  return 'OPT send to user email'
+}
 
 // const googleClient = new OAuth2Client(process.env.FROM_EMAIL);
 
@@ -148,4 +184,7 @@ const googleLogin = async (requestAnimationFrame, res) => {
   }
 };
 
-module.exports = { registerUserService, loginUserService, OTPVerifyService, googleLogin, OauthUserService };
+module.exports = { registerUserService, loginUserService, OTPVerifyService, googleLogin, OauthUserService,resetPasswordService,forgotPasswordService };
+
+
+

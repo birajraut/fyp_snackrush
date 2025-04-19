@@ -7,8 +7,8 @@ import OTPInput from "../../components/ui/OTPInput"
 
 import * as Yup from 'yup';
 import CustomButton from '../../components/ui/CustomButton';
-import { OPTPVerify } from '../../services/auth';
 import toast from 'react-hot-toast';
+import { OTPVerify } from '../../services/auth';
 
 
 const OtpVerificationPage = () => {
@@ -29,7 +29,7 @@ const OtpVerificationPage = () => {
         }),
         onSubmit: async (values,) => {
             try {
-                await OPTPVerify(values)
+                await OTPVerify(values)
                 navigate('/login');
             } catch (error: any) {
 

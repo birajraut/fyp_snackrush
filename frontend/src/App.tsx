@@ -132,6 +132,7 @@ import RestaurantItemsPage from './pages/restaurant/items';
 import AdminRestaurantPage from "./pages/admin/restaurant/index"
 import AdminRestaurantView from "./components/ui/restaurant/AdminRestuarantView"
 import ForgotPassword from './pages/auth/ForgotPassword';
+import ResetPassword from './pages/auth/ResetPassword';
 
 const App = () => {
   const { user, restaurant } = useSelector((state) => state?.auth);
@@ -142,6 +143,8 @@ const App = () => {
       <Route path='/login' element={<LoginPage />} />
       <Route path='/forgot-password' element={<ForgotPassword />} />
       <Route path='/verifyOTP' element={<OtpVerificationPage />} />
+      <Route path='/reset-password' element={<ResetPassword />} />
+
       <Route path='/redirect-oAuth' element={<OAuthRedirect />} />
 
       {/* Public routes accessible to everyone */}

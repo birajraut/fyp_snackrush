@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
 import CustomButton from '../../components/ui/CustomButton';
-// import { forgotPassword } from '../../services/auth';
+import { forgotPassword } from '../../services/auth';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -18,9 +18,10 @@ const ForgotPassword = () => {
 
     try {
       setIsLoading(true);
-      await forgotPassword(email);
+      await forgotPassword({ email });
       toast.success('Password reset link has been sent to your email');
-      navigate('/login');
+      navigate('/reset-password', { state: { email } });
+
     } catch (error: any) {
       toast.error(error.message || 'Something went wrong');
     } finally {
