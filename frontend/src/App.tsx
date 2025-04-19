@@ -38,8 +38,6 @@ import RestaurantItemsPage from './pages/restaurant/items';
 
 import AdminRestaurantPage from "./pages/admin/restaurant/index"
 
-
-
 import AdminRestaurantView from "./components/ui/restaurant/AdminRestuarantView"
 
 const App = () => {

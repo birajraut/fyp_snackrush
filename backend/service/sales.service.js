@@ -61,20 +61,13 @@ const createSaleService = async (userId, paymentMethodId, products) => {
   
 
 
-const getSaleService = async ({user_id,restaurant_id:restaurantId}) => {
+const getSaleService = async (restaurantId) => {
 
 
-  const matchCriteria = {};
-  if (restaurantId) {
-    matchCriteria["productDetails.restaurant_id"] = new mongoose.Types.ObjectId(restaurantId);
-  }
 
-  // If userId is provided, add filtering for it
-  if (user_id) {
-    matchCriteria["user_id"] = new mongoose.Types.ObjectId(user_id);
-  }
 
-    // const sales = await Sales.find({ restaurantId: restaurantId })
+
+    const sales = await Sales.find().populate('product_id').lean()
 
 
 
@@ -107,47 +100,47 @@ const getSaleService = async ({user_id,restaurant_id:restaurantId}) => {
     // ]);
 
 
-    const sales = await Sale.aggregate([
-      { $unwind: "$products" },
-      {
-        $lookup: {
-          from: "products",
-          localField: "products.product_id",
-          foreignField: "_id",
-          as: "productDetails"
-        }
-      },
-      { $unwind: "$productDetails" },
-      {
-        $match: matchCriteria // Apply dynamic filtering criteria
+    // const sales = await Sale.aggregate([
+    //   { $unwind: "$products" },
+    //   {
+    //     $lookup: {
+    //       from: "products",
+    //       localField: "products.product_id",
+    //       foreignField: "_id",
+    //       as: "productDetails"
+    //     }
+    //   },
+    //   { $unwind: "$productDetails" },
+    //   {
+    //     $match: matchCriteria // Apply dynamic filtering criteria
 
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "user_id",
-          foreignField: "_id",
-          as: "userDetails"
-        }
-      },
-      { $unwind: "$userDetails" },
-      {
-        $group: {
-          _id: "$_id",
-          user: { $first: "$userDetails" },
-          products: { 
-            $push: {
-              product: "$productDetails",
-              quantity: "$products.quantity",
-              price: "$products.price"
-            }
-          },
-          total_cost: { $first: "$total_cost" },
-          sale_date: { $first: "$sale_date" },
-          payment_status: { $first: "$payment_status" }
-        }
-      }
-    ]);
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: "users",
+    //       localField: "user_id",
+    //       foreignField: "_id",
+    //       as: "userDetails"
+    //     }
+    //   },
+    //   { $unwind: "$userDetails" },
+    //   {
+    //     $group: {
+    //       _id: "$_id",
+    //       user: { $first: "$userDetails" },
+    //       products: { 
+    //         $push: {
+    //           product: "$productDetails",
+    //           quantity: "$products.quantity",
+    //           price: "$products.price"
+    //         }
+    //       },
+    //       total_cost: { $first: "$total_cost" },
+    //       sale_date: { $first: "$sale_date" },
+    //       payment_status: { $first: "$payment_status" }
+    //     }
+    //   }
+    // ]);
 
 
     console.log('sales', sales)

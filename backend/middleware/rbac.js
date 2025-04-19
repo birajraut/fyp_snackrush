@@ -24,13 +24,10 @@ const isRestaurant = async (req, res, next) => {
     const userId = req.auth_user
 
     const { restaurant_id } = req.body
-    const { restaurantId } = req.params;
 
-    console.log('res id', restaurant_id||restaurantId)
 
-    const restaurant = await Restaurant.findById(restaurant_id||restaurantId).lean()
+    const restaurant = await Restaurant.findById(restaurant_id).lean()
 
-    console.log('ttt', restaurant_id,restaurant,restaurant?.creator?.toString(), userId?.toString())
 
         // const restaurant = await Restaurant.find({ creator: user._id, status: 'ACCEPTED' });
 
@@ -39,7 +36,7 @@ const isRestaurant = async (req, res, next) => {
     } else {
      
 
-        if (userId.toString() !== restaurant.creator.toString()) {
+        if (userId?.toString() !== restaurant?.creator?.toString()) {
             return res.status(401).json({ error: 'Unauthorized: User is nto memebr of this restaurant' });
         } else {
             next()

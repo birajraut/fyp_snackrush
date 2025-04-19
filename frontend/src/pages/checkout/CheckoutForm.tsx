@@ -201,17 +201,17 @@ const CheckoutForm = ({ submitFn }: IProps) => {
             className={`w-full py-3 px-6 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
             disabled={loading}
           >
-            {loading ? "Processing..." : `Pay $${total}`}
+            {loading ? "Processing..." : `Pay Rs. ${total}`}
           </button>
         </form>
 
         {/* Cash on Delivery Button */}
-        <button
+        {/* <button
           onClick={handleCODPayment}
           className="mt-4 w-full py-3 px-6 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none"
         >
           Cash on Delivery
-        </button>
+        </button> */}
 
         {message && (
           <p className={`mt-4 text-center ${message.includes("successful") ? "text-green-500" : "text-red-500"}`}>

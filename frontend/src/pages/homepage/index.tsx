@@ -1,17 +1,48 @@
 import { Card, CardContent } from "../../components/ui/card";
-import { FaStar, FaBlog } from "react-icons/fa";
+import { FaStar, FaBlog, FaUtensils, FaPizzaSlice, FaHamburger, FaIceCream } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { useQuery } from "@tanstack/react-query";
 import { listRestaurant } from "../../services/restaurant";
 import RestaurantCard from '../../components/ui/restaurant/RestaurantCard'
 
-// Placeholder images for the hero section and restaurants
+// Placeholder images for the hero section
 const heroImages = [
-  "https://images.pexels.com/photos/262978/pexels-photo-262978.jpeg",
-  "https://yimgf-thinkzon.yesform.com/docimgs/public/1/35/34960/34959569.jpg",
-  "https://d3pxwdeb4y32a1.cloudfront.net/wp-content/uploads/2023/07/Online-Food-Delivery-Business-in-2022.webp",
+  "https://images.pexels.com/photos/958545/pexels-photo-958545.jpeg", // Beautiful restaurant interior with warm lighting
+  "https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg", // Chef preparing food
+  "https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg", // Gourmet dish presentation
 ];
+
+// Menu categories
+const menuCategories = [
+  { name: "All", icon: <FaUtensils className="text-3xl" /> },
+  { name: "Burger", icon: <FaHamburger className="text-3xl" /> },
+  { name: "Pizza", icon: <FaPizzaSlice className="text-3xl" /> },
+  { name: "Desserts", icon: <FaIceCream className="text-3xl" /> },
+];
+
+// Customer reviews
+const customerReviews = [
+  {
+    name: "John Doe",
+    rating: 5,
+    comment: "The food was absolutely delicious! The service was excellent and the atmosphere was perfect.",
+    image: "https://randomuser.me/api/portraits/men/1.jpg"
+  },
+  {
+    name: "Jane Smith",
+    rating: 4,
+    comment: "Great place to eat! The portions are generous and the prices are reasonable.",
+    image: "https://randomuser.me/api/portraits/women/2.jpg"
+  },
+  {
+    name: "Mike Johnson",
+    rating: 5,
+    comment: "Best restaurant in town! I come here every week and I'm never disappointed.",
+    image: "https://randomuser.me/api/portraits/men/3.jpg"
+  }
+];
+
 const featuredRestaurants = [
   {
     id: 1027,
@@ -63,13 +94,6 @@ const featuredRestaurants = [
   },
 ];
 
-// const restaurants = [
-//   { name: "KKFC", rating: 4.8, reviews: 320, image: "https://foodmandu.com//Images/Vendor/587/OriginalSize/kkfc-website-listing-logo_121018045529.png" },
-//   { name: "KFC", rating: 4.7, reviews: 280, image: "https://upload.wikimedia.org/wikipedia/en/thumb/5/57/KFC_logo-image.svg/640px-KFC_logo-image.svg.png" },
-//   { name: "BurgerHouse", rating: 4.6, reviews: 250, image: "https://dynamic-media-cdn.tripadvisor.com/media/photo-o/11/44/e8/e9/the-burger-house-and.jpg?w=800&h=-1&s=1" },
-//   { name: "Chicken Station", rating: 4.5, reviews: 200, image: "https://images.foodmandu.com//Images/Vendor/508/OriginalSize/CHCKEN_STATION_200122063023_130624033522.APP_(1).jpg" },
-// ];
-
 const blogPosts = [
   { title: "Top 5 Dishes to Try in 2024", author: "John Doe", snippet: "Discover the must-try dishes this year..." },
   { title: "Hidden Gems of the City", author: "Jane Smith", snippet: "Exploring lesser-known yet amazing restaurants..." },
@@ -85,6 +109,7 @@ const HomePage = () => {
   });
 
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
+  const [activeCategory, setActiveCategory] = useState("All");
 
   // Check if user is logged in
   const authToken = localStorage.getItem("token");
@@ -131,105 +156,159 @@ const HomePage = () => {
   }, [scrollPosition]);
 
   return (
-    <div className="min-h-screen bg-gray-100">
-   
-   <div className="relative w-full h-[400px] overflow-hidden">
-          {heroImages.map((image, index) => (
-            <div
-              key={index}
-              className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ${
-                index === currentHeroIndex ? "opacity-100" : "opacity-0"
-              }`}
-            >
-              <img
-                src={image}
-                alt={`Hero ${index + 1}`}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          ))}
-        </div>
-
-     {/* Restaurant Section */}
-<div className="p-6">
-  {user==='admin'?<h2 className="text-xl font-semibold mb-4">Most Reviewed Restaurants</h2>:<h2 className="text-xl font-semibold mb-4">Most Reviewed Products</h2>}
-  <div
-    id="restaurant-carousel"
-    className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory"
-    style={{ scrollBehavior: "smooth" }}
-  >
-    {/* If data is loading, show a loader */}
-    {isLoading ? (
-      <div>Loading...</div>
-    ) : error ? (
-      <div>Error loading restaurants</div>
-    ) : (
-      restaurantList?.data?.result?.map((restaurant, index) => (
-        <div
-          key={index}
-          className="flex-shrink-0 w-64 bg-white rounded-lg shadow-md overflow-hidden snap-center"
-        >
-          <RestaurantCard
-            id={restaurant._id} // Assuming _id is the restaurant ID
-            title={restaurant.name}
-            description={restaurant.description}
-            logo={restaurant.image || "/default-restaurant-image.png"}
-          />
-        </div>
-      ))
-    )}
-  </div>
-</div>
-
-
-      {!user==='admin'?<div className="p-6">
-        <h2 className="text-xl font-semibold mb-4">Most Featured Restaurants</h2>
-        <div
-          id="restaurant-carousel"
-          className="flex gap-4 overflow-x-auto scroll-smooth snap-x snap-mandatory"
-          style={{ scrollBehavior: "smooth" }}
-        >
-        {featuredRestaurants.map((restaurant,index) => (
-        <div
-        key={index}
-        className="flex-shrink-0 w-64 bg-white rounded-lg shadow-md overflow-hidden snap-center"
-        >
-              <div className="h-40 overflow-hidden">
-                <a href={restaurant.link}>
-                  <img
-                    src={restaurant.image}
-                    alt={restaurant.name}
-                    className="w-full h-full object-cover"
-                  />
-                </a>
-              </div>
-              <div className="p-4">
-                <a href={restaurant.link}>
-                  <h3 className="text-lg font-semibold hover:text-blue-500">{restaurant.name}</h3>
-                </a>
+    <div className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <div className="relative w-full h-[600px] overflow-hidden">
+        {heroImages.map((image, index) => (
+          <div
+            key={index}
+            className={`absolute inset-0 w-full h-full transition-opacity duration-1000 ${
+              index === currentHeroIndex ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <img
+              src={image}
+              alt={`Hero ${index + 1}`}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+              <div className="text-center text-white max-w-3xl px-4">
+                <h1 className="text-5xl font-bold mb-4">Delicious Food Delivered To Your Door</h1>
+                <p className="text-xl mb-8">Order your favorite food from the best restaurants in town</p>
+                <button 
+                  onClick={() => navigate('/restaurant')}
+                  className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full text-lg"
+                >
+                  Order Now
+                </button>
               </div>
             </div>
-          ))}
           </div>
-          </div>:null}
-      {/* Blog Section */}
-      <div className="p-6">
-        <h2 className="text-xl font-semibold mb-4">People's Blogs</h2>
-        <div className="grid gap-4 md:grid-cols-3">
-          {blogPosts.map((post, index) => (
-            <Card key={index} className="p-4">
-              <CardContent>
-                <h3 className="text-lg font-bold flex items-center">
-                  <FaBlog className="mr-2" /> {post.title}
-                </h3>
-                <p className="text-sm text-gray-600">By {post.author}</p>
-                <p className="mt-2 text-gray-700">{post.snippet}</p>
-              </CardContent>
-            </Card>
-          ))}
+        ))}
+      </div>
+
+      {/* Menu Categories */}
+      <div className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">Our Menu</h2>
+          <div className="flex justify-center gap-8 mb-12">
+            {menuCategories.map((category) => (
+              <button
+                key={category.name}
+                onClick={() => setActiveCategory(category.name)}
+                className={`flex flex-col items-center p-4 rounded-lg transition-all ${
+                  activeCategory === category.name
+                    ? "bg-red-600 text-white"
+                    : "bg-white text-gray-800 hover:bg-gray-100"
+                }`}
+              >
+                {category.icon}
+                <span className="mt-2">{category.name}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
-    
+
+      {/* Featured Restaurants */}
+      <div className="py-16">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">Featured Restaurants</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {isLoading ? (
+              <div>Loading...</div>
+            ) : error ? (
+              <div>Error loading restaurants</div>
+            ) : (
+              restaurantList?.data?.result?.slice(0, 6).map((restaurant) => (
+                <RestaurantCard
+                  key={restaurant._id}
+                  id={restaurant._id}
+                  title={restaurant.name}
+                  description={restaurant.description}
+                  logo={restaurant.image || "/default-restaurant-image.png"}
+                />
+              ))
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* About Section */}
+      <div className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+            <div>
+              <h2 className="text-3xl font-bold mb-6">About Us</h2>
+              <p className="text-gray-600 mb-4">
+                We are dedicated to providing the best food delivery service in town. Our platform connects you with the finest restaurants and ensures your food arrives fresh and delicious.
+              </p>
+              <p className="text-gray-600">
+                With our easy-to-use platform, you can order food from your favorite restaurants with just a few clicks. We guarantee fast delivery and excellent customer service.
+              </p>
+            </div>
+            <div className="relative h-96">
+              <img
+                src="https://images.pexels.com/photos/1267320/pexels-photo-1267320.jpeg"
+                alt="About Us"
+                className="w-full h-full object-cover rounded-lg"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Customer Reviews */}
+      <div className="py-16">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">What Our Customers Say</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {customerReviews.map((review, index) => (
+              <Card key={index} className="p-6">
+                <CardContent>
+                  <div className="flex items-center mb-4">
+                    <img
+                      src={review.image}
+                      alt={review.name}
+                      className="w-12 h-12 rounded-full mr-4"
+                    />
+                    <div>
+                      <h3 className="font-bold">{review.name}</h3>
+                      <div className="flex text-yellow-400">
+                        {[...Array(review.rating)].map((_, i) => (
+                          <FaStar key={i} />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                  <p className="text-gray-600">{review.comment}</p>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Contact Section */}
+      <div className="py-16 bg-gray-50">
+        <div className="container mx-auto px-4">
+          <h2 className="text-3xl font-bold text-center mb-12">Contact Us</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div>
+              <h3 className="font-bold mb-2">Location</h3>
+              <p className="text-gray-600">123 Food Street, City</p>
+            </div>
+            <div>
+              <h3 className="font-bold mb-2">Phone</h3>
+              <p className="text-gray-600">+1 234 567 890</p>
+            </div>
+            <div>
+              <h3 className="font-bold mb-2">Email</h3>
+              <p className="text-gray-600">info@snackrush.com</p>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
