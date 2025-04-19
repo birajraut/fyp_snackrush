@@ -1,10 +1,13 @@
 import { Card, CardContent } from "../../components/ui/card";
-import { FaStar, FaBlog, FaUtensils, FaPizzaSlice, FaHamburger, FaIceCream } from "react-icons/fa";
+import { FaStar, FaUtensils, FaPizzaSlice, FaHamburger, FaIceCream } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from 'react';
 import { useQuery } from "@tanstack/react-query";
 import { listRestaurant } from "../../services/restaurant";
 import RestaurantCard from '../../components/ui/restaurant/RestaurantCard'
+import { useSelector } from 'react-redux';
+import { IRootReducer } from '../../types/redux';
+
 
 // Placeholder images for the hero section
 const heroImages = [
@@ -43,63 +46,6 @@ const customerReviews = [
   }
 ];
 
-const featuredRestaurants = [
-  {
-    id: 1027,
-    name: "4 Corners - Detroit Style Pizza",
-    image: "https://fmdadmin.foodmandu.com//Images/Vendor/1027/Logo/Untitled_design_-_2024-06-10T160909_100624102433.920.png",
-    link: "/Restaurant/Details/1027",
-  },
-  {
-    id: 269,
-    name: "Fire And Ice Pizzeria - Thamel",
-    image: "https://fmdadmin.foodmandu.com//Images/Vendor/269/Logo/web_240423103631_200624060757.listing-fire-and-ice.png",
-    link: "/Restaurant/Details/269",
-  },
-  {
-    id: 326,
-    name: "The Workshop Eatery - Bakhundole",
-    image: "https://fmdadmin.foodmandu.com//Images/Vendor/326/Logo/Untitled_design_-_2024-06-11T112136_110624053658.455.png",
-    link: "/Restaurant/Details/326",
-  },
-  {
-    id: 232,
-    name: "Le Trio - Jhamsikhel",
-    image: "https://fmdadmin.foodmandu.com//Images/Vendor/232/Logo/Untitled_design_-_2024-06-10T172330_100624113837.765.png",
-    link: "/Restaurant/Details/232",
-  },
-  {
-    id: 289,
-    name: "Burger Shack - Jawalakhel",
-    image: "https://fmdadmin.foodmandu.com//Images/Vendor/289/Logo/4_151222081130_150424053129._burger-shack-web-listing.jpg",
-    link: "/Restaurant/Details/289",
-  },
-  {
-    id: 978,
-    name: "Koto Restaurant - Durbarmarg",
-    image: "https://fmdadmin.foodmandu.com//Images/Vendor/978/Logo/Untitled_design_-_2024-06-10T152425_100624095135.059.png",
-    link: "/Restaurant/Details/978",
-  },
-  {
-    id: 846,
-    name: "Kathmandu Marriott",
-    image: "https://fmdadmin.foodmandu.com//Images/Vendor/846/Logo/8_151222081509._ktm-marritot-web.listing.jpg",
-    link: "/Restaurant/Details/846",
-  },
-  {
-    id: 844,
-    name: "Burger Shack - Kamaladi",
-    image: "https://fmdadmin.foodmandu.com//Images/Vendor/844/Logo/4_151222081130_150424053157._burger-shack-web-listing.jpg",
-    link: "/Restaurant/Details/844",
-  },
-];
-
-const blogPosts = [
-  { title: "Top 5 Dishes to Try in 2024", author: "John Doe", snippet: "Discover the must-try dishes this year..." },
-  { title: "Hidden Gems of the City", author: "Jane Smith", snippet: "Exploring lesser-known yet amazing restaurants..." },
-  { title: "A Guide to Fine Dining", author: "Mark Brown", snippet: "Everything you need to know about fine dining..." },
-];
-
 const HomePage = () => {
   const navigate = useNavigate();
 
@@ -111,10 +57,9 @@ const HomePage = () => {
   const [currentHeroIndex, setCurrentHeroIndex] = useState(0);
   const [activeCategory, setActiveCategory] = useState("All");
 
-  // Check if user is logged in
-  const authToken = localStorage.getItem("token");
-  const userData = localStorage.getItem("user"); // Assuming this contains user info
-  const user = userData ? JSON.parse(userData) : null;
+  const handleViewRestaurants = () => {
+    navigate('/restaurants');
+  };
 
   // Auto-slide hero section
   useEffect(() => {
@@ -175,12 +120,15 @@ const HomePage = () => {
               <div className="text-center text-white max-w-3xl px-4">
                 <h1 className="text-5xl font-bold mb-4">Delicious Food Delivered To Your Door</h1>
                 <p className="text-xl mb-8">Order your favorite food from the best restaurants in town</p>
-                <button 
-                  onClick={() => navigate('/restaurant')}
-                  className="bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-8 rounded-full text-lg"
-                >
-                  Order Now
-                </button>
+                <div className="flex gap-4 justify-center">
+                  <button 
+                    onClick={handleViewRestaurants}
+                    className="bg-white hover:bg-gray-100 text-red-600 font-bold py-3 px-8 rounded-full text-lg"
+                  >
+                    View Restaurants
+                  </button>
+                
+                </div>
               </div>
             </div>
           </div>
@@ -220,7 +168,7 @@ const HomePage = () => {
             ) : error ? (
               <div>Error loading restaurants</div>
             ) : (
-              restaurantList?.data?.result?.slice(0, 6).map((restaurant) => (
+              restaurantList?.data?.result?.slice(0, 6).map((restaurant, index) => (
                 <RestaurantCard
                   key={restaurant._id}
                   id={restaurant._id}
@@ -296,11 +244,11 @@ const HomePage = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
             <div>
               <h3 className="font-bold mb-2">Location</h3>
-              <p className="text-gray-600">123 Food Street, City</p>
+              <p className="text-gray-600">Naxal Bhagwati, Kathmandu</p>
             </div>
             <div>
               <h3 className="font-bold mb-2">Phone</h3>
-              <p className="text-gray-600">+1 234 567 890</p>
+              <p className="text-gray-600">+977 9860384625</p>
             </div>
             <div>
               <h3 className="font-bold mb-2">Email</h3>

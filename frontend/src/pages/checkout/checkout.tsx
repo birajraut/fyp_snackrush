@@ -1,5 +1,4 @@
 import StriteElement from "./StriteElement"; // Fixed the typo here
-
 import {createSale } from '../../services/sale'
 import { useDispatch, useSelector } from "react-redux";
 import { resetCart } from "../../redux/reducers/cartSlice";

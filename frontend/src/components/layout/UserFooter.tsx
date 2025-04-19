@@ -1,46 +1,100 @@
 import React from 'react';
-import { useNavigate } from 'react-router';
+import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube, FaPhone, FaEnvelope, FaMapMarkerAlt } from 'react-icons/fa';
 
-const UserFooter = () => {
-  const navigate = useNavigate();
+const FooterSection = () => {
   return (
-    <footer className="bg-gray-900 text-white py-8 mt-12">
-      <div className="container mx-auto px-6 flex flex-col md:flex-row justify-between">
-        {/* Brand & About */}
-        <div className="mb-6 md:mb-0">
-          <h2 className="text-2xl font-bold">SnackRush</h2>
-          <p className="text-gray-400 mt-2">Your favorite food, delivered fast and fresh.</p>
-        </div>
+    <footer className="bg-gray-900 text-white py-12">
+      <div className="container mx-auto px-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+          {/* Brand & About */}
+          <div>
+            <h2 className="text-2xl font-bold mb-4">SnackRush</h2>
+            <p className="text-gray-400">
+              We make you ordering Expericence better.
+            </p>
+          </div>
 
-        {/* Quick Links */}
-        <div className="flex flex-col mb-6 md:mb-0">
-          <h3 className="text-lg font-semibold">Quick Links</h3>
-          <ul className="mt-2 space-y-2">
-            <li><a onClick={() => navigate('/')} className="cursor-pointer text-gray-400 hover:text-white">Home</a></li>
-            <li><a onClick={() => navigate('/aboutUs')} className="cursor-pointer text-gray-400 hover:text-white">About Us</a></li>
-            <li><a onClick={() => navigate('/profile')} className="cursor-pointer text-gray-400 hover:text-white">Profile</a></li>
-            <li><a onClick={() => navigate('/contact')} className="cursor-pointer text-gray-400 hover:text-white">Contact</a></li>
-          </ul>
-        </div>
+          {/* Opening Hours */}
+          <div>
+            <h3 className="text-xl font-bold mb-4">Opening Hours</h3>
+            <div className="space-y-2">
+              <p className="text-gray-400">Everyday</p>
+              <p className="text-gray-400">10.00 Am - 10.00 Pm</p>
+            </div>
+          </div>
 
-        {/* Social Media */}
-        <div>
-          <h3 className="text-lg font-semibold">Follow Us</h3>
-          <div className="flex space-x-4 mt-2">
-            <a href="#" className="text-gray-400 hover:text-white"><i className="fab fa-facebook-f"></i></a>
-            <a href="#" className="text-gray-400 hover:text-white"><i className="fab fa-twitter"></i></a>
-            <a href="#" className="text-gray-400 hover:text-white"><i className="fab fa-instagram"></i></a>
-            <a href="#" className="text-gray-400 hover:text-white"><i className="fab fa-youtube"></i></a>
+          {/* Contact Info */}
+          <div>
+            <h3 className="text-xl font-bold mb-4">Contact Us</h3>
+            <div className="space-y-3">
+              <div className="flex items-center">
+                <FaMapMarkerAlt className="text-red-500 mr-3" />
+                <span className="text-gray-400">Naxal Bhagwati, Kathmandu</span>
+              </div>
+              <div className="flex items-center">
+                <FaPhone className="text-red-500 mr-3" />
+                <span className="text-gray-400">+977-9860384625</span>
+              </div>
+              <div className="flex items-center">
+                <FaEnvelope className="text-red-500 mr-3" />
+                <span className="text-gray-400">info@snackrush.com</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Social Media */}
+          <div>
+            <h3 className="text-xl font-bold mb-4">Follow Us</h3>
+            <div className="flex space-x-4">
+              <a 
+                href="https://www.facebook.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center hover:bg-red-700 transition-colors"
+              >
+                <FaFacebookF />
+              </a>
+              <a 
+                href="https://www.twitter.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center hover:bg-red-700 transition-colors"
+              >
+                <FaTwitter />
+              </a>
+              <a 
+                href="https://www.instagram.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center hover:bg-red-700 transition-colors"
+              >
+                <FaInstagram />
+              </a>
+              <a 
+                href="https://www.youtube.com" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="w-10 h-10 rounded-full bg-red-600 flex items-center justify-center hover:bg-red-700 transition-colors"
+              >
+                <FaYoutube />
+              </a>
+            </div>
           </div>
         </div>
-      </div>
-      
-      {/* Copyright */}
-      <div className="text-center text-gray-500 mt-6 border-t border-gray-700 pt-4">
-        <p>&copy; {new Date().getFullYear()} SnackRush. All rights reserved.</p>
+
+        {/* Copyright */}
+        <div className="mt-8 pt-8 border-t border-gray-700 text-center">
+          <p className="text-gray-400">
+            © {new Date().getFullYear()} All Rights Reserved By SnackRush
+          </p>
+          <p className="text-gray-400 mt-2">
+            © Distributed By SnackRush
+          </p>
+        </div>
       </div>
     </footer>
   );
 };
 
-export default UserFooter;
+export default FooterSection;
+  
