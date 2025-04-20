@@ -134,6 +134,7 @@ import AdminRestaurantView from "./components/ui/restaurant/AdminRestuarantView"
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import UserListPage from './pages/admin/user/user';
+import NotFound from './pages/NotFound/NotFound';
 
 const App = () => {
   const { user, restaurant } = useSelector((state) => state?.auth);
@@ -190,6 +191,8 @@ const App = () => {
         <Route path='restaurants' element={<AdminRestaurantPage />} />
         <Route path='restaurant/:id' element={<AdminRestaurantView />} />
       </Route>
+      <Route path='*' element={<NotFound />} />
+
     </Routes>
   );
 };

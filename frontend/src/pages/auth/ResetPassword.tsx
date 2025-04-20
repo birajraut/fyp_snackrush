@@ -1,11 +1,13 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { toast } from 'react-hot-toast';
-import { resetPassword } from '../../services/auth'; // create this API
+import { resetPassword } from '../../services/auth';
 import CustomButton from '../../components/ui/CustomButton';
+import Input from '../../components/ui/Input';
 
 const ResetPassword = () => {
   const navigate = useNavigate();
+  const {state} = useLocation();
   const [email, setEmail] = useState('');
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
@@ -46,38 +48,35 @@ const ResetPassword = () => {
           </h2>
         </div>
 
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+        <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
-            <input
+            <Input
               type="email"
               placeholder="Email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="input"
-              required
+              value={state.email}
+              // onChange={(e) => setEmail(e.target.value)}
+              // required
+              // disabled={false}
             />
-            <input
+            <Input
               type="text"
               placeholder="OTP"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              className="input"
               required
             />
-            <input
+            <Input
               type="password"
               placeholder="New Password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="input"
               required
             />
-            <input
+            <Input
               type="password"
               placeholder="Confirm Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="input"
               required
             />
           </div>
@@ -105,3 +104,4 @@ const ResetPassword = () => {
 };
 
 export default ResetPassword;
+
