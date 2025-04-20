@@ -1,115 +1,4 @@
-// import { useParams } from "react-router-dom";
-// import { useQuery } from "@tanstack/react-query";
-// import { resturantDetailsFn } from "../../services/restaurant";
-// import { IRestaurantResponse } from "../../types/restaurant";
-// import placeholder from "../../assets/restaurantPlaceholder.png";
-// import ProductCard from "../../components/ui/restaurant/product/ProductCard";
-// import { listProduct } from "../../services/productService";
-// import { GoLocation } from "react-icons/go";
-// import { CiPhone } from "react-icons/ci";
-
-
-// const RestaurantDetail = () => {
-//   const { id } = useParams<{ id: string }>();
-//   const { data: restaurant, isLoading, isError } = useQuery({
-//     queryKey: ["restaurant-details", id],
-//     queryFn: async () => resturantDetailsFn(id as string),
-//   });
-//   const { data: productList, isLoading: isLoadingProduct, error: errorProduct } = useQuery({
-//     queryKey: ['products', id],
-//     queryFn: async () => listProduct(id as string),
-//   });
-//   const restaurantData: IRestaurantResponse = restaurant?.data?.result
-//   if (isLoading) {
-//     return 'Loading restaurant'
-//   }
-//   if (isError) {
-//     return 'Error fetching restaurant'
-//   }
-
-
-//   console.log(restaurant,'restaurant data')
-//   return (
-//     <div>
-//       <div className="relative w-full h-[450px] bg-white">
-//         <img src={restaurantData?.banner || placeholder} alt={restaurantData?.name} className="w-full h-full object-cover" />
-//         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent flex flex-col justify-end p-4">
-//           <div className="container mx-auto">
-//             <div className="w-16 h-16 rounded-md overflow-hidden">
-//               <img src={restaurantData.image || ''} alt="logo" className="w-full h-full object-cover" />
-//             </div>
-//             <h1 className="text-3xl font-bold text-white">{restaurantData?.name}</h1>
-//             <p className="text-gray-300">{restaurantData?.description}</p>
-
-//             <div>
-//               <ul className="text-white space-y-3 mt-5">
-//                 <li className="flex items-center gap-5">
-//                   <div>
-//                     <GoLocation />
-//                   </div>
-//                   <div>{restaurantData.address||"N/A"}</div>
-//                 </li>
-//                 <li className="flex items-center gap-5">
-//                   <div>
-//                     <CiPhone />
-//                   </div>
-//                   <div>{restaurantData?.phone||'N/A'}</div>
-//                 </li>
-//               </ul>
-//             </div>
-//           </div>
-
-//         </div>
-//       </div>
-
-
-//       <div className="container mx-auto">
-//         <div className="p-6 flex flex-col">
-//           <h2 className="text-xl font-semibold mb-4">Most Reviewed Food</h2>
-//           <div
-//             style={{ scrollBehavior: "smooth" }}
-//           >
-//             {
-//               isLoadingProduct && 'Loading Products'
-//             }
-
-//             {
-//               errorProduct && 'Error loading Products'
-//             }
-//             <div className="grid grid-cols-3 gap-5">
-//               {
-//                 productList?.data?.result?.map((product, index) => {
-//                   return (
-//                     <div key={index}>
-//                       <ProductCard
-// restaurant={product}
-//                         id={product._id}
-//                         title={product.name}
-//                         description={product.description}
-//                         price={product?.price}
-//                         forUser
-//                       // className=' border border-b-transparent rounded-b-none'
-//                       />
-
-//                     </div>
-
-//                   )
-//                 })
-//               }
-//             </div>
-//           </div>
-
-//         </div>
-//       </div>
-
-
-//     </div>
-//   );
-// };
-
-// export default RestaurantDetail;
-
-
+import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
@@ -125,6 +14,8 @@ const RestaurantDetail = () => {
   const { id } = useParams<{ id: string }>();
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
+  const [searchTerm, setSearchTerm] = useState("");
+
 
   // Fetch restaurant details
   const { data: restaurant, isLoading, isError } = useQuery({
@@ -211,7 +102,7 @@ const RestaurantDetail = () => {
               </li>
               <li className="flex items-center gap-3">
                 <CiPhone className="text-xl" />
-                <span>{restaurantData?.phone || "N/A"}</span>
+                <span>{restaurantData?.phone || "Number not avaible"}</span>
               </li>
             </ul>
           </div>
@@ -220,14 +111,24 @@ const RestaurantDetail = () => {
 
       {/* Product Section */}
       <div className="container mx-auto py-12 px-4">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Menu</h2>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+        <h2 className="text-2xl font-bold text-gray-800">Menu</h2>
+        <input
+          type="text"
+          placeholder="Search food..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="w-full sm:w-64 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+        />
+      </div>
         {isLoadingProduct ? (
           <p className="text-center text-lg text-gray-500">Loading products...</p>
         ) : errorProduct ? (
           <p className="text-center text-lg text-red-500">Error loading products.</p>
         ) : (
           <div className="space-y-6">
-            {productList?.data?.result?.map((product) => (
+            {productList?.data?.result?.filter((product) =>
+                  product.name.toLowerCase().includes(searchTerm.toLowerCase())).map((product) => (
               <div
                 key={product._id}
                 className="flex items-center gap-6 bg-white shadow-md rounded-lg p-4"
@@ -241,7 +142,7 @@ const RestaurantDetail = () => {
                   <h3 className="text-lg font-bold text-gray-800">{product.name}</h3>
                   <p className="text-sm text-gray-600 mt-1">{product.description}</p>
                   <p className="text-sm text-gray-800 font-semibold mt-2">
-                    Price: ${product.price}
+                    Price: Rs. {product.price}
                   </p>
                 </div>
                 <div className="flex items-center space-x-4">

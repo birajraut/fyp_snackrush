@@ -22,6 +22,7 @@
 
 // export default RestaurantLayout;
 
+import { Link } from 'react-router-dom';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { FaUtensils, FaChartPie, FaUsers, FaCog, FaSignOutAlt } from 'react-icons/fa';
 import { MdFastfood } from 'react-icons/md';
@@ -46,7 +47,9 @@ const RestaurantLayout = () => {
       {/* Sidebar */}
       <aside className="w-[250px] bg-white shadow-lg flex flex-col">
         <div className="p-6 border-b">
-          <h1 className="text-2xl font-bold text-gray-800">SnackRush</h1>
+        <Link to="/" className="text-2xl font-bold text-gray-800 hover:text-blue-500">
+                SnackRush
+              </Link>
           <p className="text-sm text-gray-500">Restaurant Manager</p>
         </div>
         <nav className="flex-1 p-4 space-y-4">

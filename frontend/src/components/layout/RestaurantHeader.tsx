@@ -60,6 +60,7 @@
 // export default RestaurantHeader;
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import placeholder from '../../assets/restaurant.png';
 import { useNavigate } from 'react-router-dom';

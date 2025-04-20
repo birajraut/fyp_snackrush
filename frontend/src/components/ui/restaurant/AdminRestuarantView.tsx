@@ -160,16 +160,13 @@ const AdminRestaurantView = () => {
             <div className="grid grid-cols-2 gap-4 mt-4 text-sm text-gray-700">
               <div>
                 <p className="font-medium">Address:</p>
-                <p>{restaurant?.location || "Address not provided"}</p>
+                <p>{restaurant?.address || "Address not provided"}</p>
               </div>
               <div>
                 <p className="font-medium">Phone:</p>
                 <p>{restaurant?.phone || "Phone number not available"}</p>
               </div>
-              <div>
-                <p className="font-medium">Email:</p>
-                <p>{restaurant?.email || "Email not available"}</p>
-              </div>
+              
             </div>
           </div>
         </div>

@@ -154,7 +154,7 @@ const CartPage = () => {
 
                 {/* Product Details */}
                 <div className="flex-1">
-                  <h3 className="font-semibold text-lg text-gray-800">{item.title}</h3>
+                  <h3 className="font-semibold text-lg text-gray-800">{item.name}</h3>
                   <p className="text-sm text-gray-600 mt-1">Price: Rs. {item.price.toFixed(2)}</p>
                   <p className="text-sm text-gray-600 mt-1">
                     Subtotal: Rs. {(item.price * item.quantity).toFixed(2)}

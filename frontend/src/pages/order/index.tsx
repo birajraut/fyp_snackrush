@@ -24,7 +24,7 @@ const OrderPage = () => {
         ? { user_id: user?.user?._id }
         : { restaurant_id: restaurant?.id };
 
-        console.log('params', params);
+        console.log('params=====>', params);
       const response = await listOrder(params);
       return response?.data?.result || [];
     },
@@ -61,6 +61,7 @@ const OrderPage = () => {
       ) : (
         <div className="space-y-8">
           {orders?.map((order) => (
+            console.log("order here==", order),
             <div key={order._id} className="bg-white shadow-lg rounded-lg p-6">
               {/* Order Header */}
               <div className="flex items-center justify-between mb-4">

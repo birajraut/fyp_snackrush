@@ -198,7 +198,7 @@ const RestaurantCreateForm = ({ setIsModalOpen }: IProps) => {
                 />
 
                 <Textarea 
-                    name="phone number" 
+                    name="phone" 
                     placeholder="phone number" 
                     onChange={formik.handleChange} 
                     label="Phone Number" 
