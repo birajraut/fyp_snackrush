@@ -2,12 +2,15 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import placeholder from '../../assets/restaurant.png'
+import userPlaceHolder from '../../assets/userPlaceholder.png'
 
 
 const handleLogout = () => {
     localStorage.clear();
     window.location.href = "/";
 };
+
+const user = JSON.parse(localStorage.getItem('user') || '{}');
 const AdminHeader = () => {
     return (
         <>
@@ -22,7 +25,7 @@ const AdminHeader = () => {
                     <Menu as='div' className='relative inline-block text-left'>
                         <div>
                             <MenuButton className='inline-flex  justify-center gap-x-1.5 rounded-full w-10 h-10 bg-white px-3 py-2 text-sm font-semibold text-gray-900 ring-1 shadow-xs ring-gray-300 ring-inset hover:bg-gray-50'>
-                                <img src={placeholder} alt='i age' className='w-full h-full object-cover' />
+                                <img src={userPlaceHolder || user?.image} alt='i age' className='w-full h-full object-cover' />
                             </MenuButton>
                         </div>
 

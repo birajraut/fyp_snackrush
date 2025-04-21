@@ -1,4 +1,4 @@
-import { NavLink, useNavigate, useLocation } from "react-router-dom";
+import { NavLink, useNavigate, useLocation, data } from "react-router-dom";
 import Button from "../../components/ui/button";
 import { useSelector, useDispatch } from "react-redux";
 import { IRootReducer } from "../../types/redux";
@@ -7,7 +7,8 @@ import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import userPlaceholder from "../../assets/userPlaceholder.png";
 import { AiOutlineShoppingCart } from "react-icons/ai";
 import { FaPhone, FaMapMarkerAlt, FaEnvelope } from "react-icons/fa";
-import { setLoginAs, setRestaurant } from "../../redux/reducers/authSlice";
+import { setLoginAs, setRestaurant, setUser } from "../../redux/reducers/authSlice";
+import { use } from "react";
 
 const UserHeader = () => {
   const dispatch = useDispatch();
@@ -17,6 +18,7 @@ const UserHeader = () => {
   const cart = useSelector((state) => state.cart.cart);
 
   const isAuthorized = !!accessToken;
+
 
   // Filter menu items (ensure "Restaurants" is always visible)
   const filteredMenu = mainMenu.map((item) => {
@@ -125,7 +127,7 @@ const UserHeader = () => {
                       {/* User Info */}
                       <div className="px-4 py-2 border-b border-gray-100">
                         <p className="text-sm font-semibold text-gray-900">
-                          {user?.name || "User"}
+                          Hey! {user?.user?.fullName || "Users"}
                         </p>
                         <p className="text-xs text-gray-500">{user?.email}</p>
                       </div>

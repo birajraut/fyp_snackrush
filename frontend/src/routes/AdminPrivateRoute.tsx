@@ -3,9 +3,6 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 
-
-
-
 interface IProps {
     children: React.ReactNode
 }
@@ -22,6 +19,5 @@ const AdminPrivateRoute = ({ children }: IProps) => {
     }, [loginAs, navigate]);
     return children
 }
-
 
 export default AdminPrivateRoute

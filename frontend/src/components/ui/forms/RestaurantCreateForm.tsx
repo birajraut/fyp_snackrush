@@ -114,9 +114,9 @@ const RestaurantCreateForm = ({ setIsModalOpen }: IProps) => {
         if (autocompleteRef.current && addressInputRef.current) {
             const inputEl = addressInputRef.current.querySelector('input');
             if (inputEl) {
-              inputEl.value = selectedLocation?.address;
-            }
-          }
+            inputEl.value = selectedLocation?.address;
+        }
+        }
 
 
 

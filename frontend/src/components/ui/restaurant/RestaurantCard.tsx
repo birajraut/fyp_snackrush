@@ -13,7 +13,7 @@ const RestaurantCard = ({title, description, logo, id}:IProps)=>{
     const navigate = useNavigate()
     const auth= useSelector(state=>state.auth)
     // const user = useSelector(state=>state.user)
-    console.log(logo, auth.accessToken,'aiuth state')
+    // console.log(logo, auth.accessToken,'aiuth state')
 const dispatch= useDispatch()
     const handleRedirect = ()=>{
         if(auth?.accessToken){

@@ -135,6 +135,7 @@ import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import UserListPage from './pages/admin/user/user';
 import NotFound from './pages/NotFound/NotFound';
+import DashboardPage from './pages/admin/dahboard/dashboard';
 
 const App = () => {
   const { user, restaurant } = useSelector((state) => state?.auth);
@@ -185,7 +186,8 @@ const App = () => {
 
       {/* Admin private routes */}
       <Route path='/admin' element={<AdminPrivateRoute children={<AdminLayout />} />}>
-        <Route index element='Dashboard Admin' />
+        <Route index element={<DashboardPage/>} />
+        <Route path='/admin/dashboard' element={<DashboardPage/>} />
         <Route path='/admin/users' element={<UserListPage />} />
 
         <Route path='restaurants' element={<AdminRestaurantPage />} />
