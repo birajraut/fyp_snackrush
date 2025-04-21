@@ -19,7 +19,7 @@ const ROUTE_LINE_STYLE = {
   type: 'line' as const,
   paint: {
     'line-color': '#1db7dd',
-    'line-width': 5,
+    'line-width': 10,
   },
   layout: {
     'line-join': 'round',
@@ -39,6 +39,7 @@ const TrackProductPage = () => {
   const { id } = useParams();
   const { state } = useLocation();
   const order = state?.order;
+  const [routeCoords, setRouteCoords] = useState<Coordinates[]>([]);
 
 
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -119,51 +120,26 @@ setProductLocation([Details?.lng, Details?.lat])
 
   // 3. Dummy delivery movement (comment this out when using real socket)
   useEffect(() => {
-    if (!productLocation || !userLocation) return;
-
-    // Initialize near product location
-    const initialLocation: Coordinates = [
-      productLocation[0] - 0.002,
-      productLocation[1] - 0.002
-    ];
-    setDeliveryLocation(initialLocation);
-
-    // Set up movement towards user
+    if (!routeCoords.length) return;
+  
+    let index = 0;
+    setDeliveryLocation(routeCoords[0]);
+  
     dummyUpdateIntervalRef.current = setInterval(() => {
-      setDeliveryLocation(prev => {
-        if (!prev || !userLocation) return prev;
-        
-        // Calculate direction
-        const directionLng = userLocation[0] > prev[0] ? 1 : -1;
-        const directionLat = userLocation[1] > prev[1] ? 1 : -1;
-        
-        // Move towards user
-        const newLng = prev[0] + (DUMMY_MOVEMENT_STEP * directionLng);
-        const newLat = prev[1] + (DUMMY_MOVEMENT_STEP * directionLat);
-        
-        // Stop when close to user
-        const distance = Math.sqrt(
-          Math.pow(userLocation[0] - newLng, 2) + 
-          Math.pow(userLocation[1] - newLat, 2))
-        ;
-        
-        if (distance < DUMMY_MOVEMENT_STEP * 2) {
-          if (dummyUpdateIntervalRef.current) {
-            clearInterval(dummyUpdateIntervalRef.current);
-          }
-          return userLocation;
-        }
-        
-        return [newLng, newLat];
-      });
+      index += 1;
+      if (index >= routeCoords.length) {
+        clearInterval(dummyUpdateIntervalRef.current!);
+        return;
+      }
+      setDeliveryLocation(routeCoords[index]);
     }, DUMMY_UPDATE_INTERVAL);
-
+  
     return () => {
       if (dummyUpdateIntervalRef.current) {
         clearInterval(dummyUpdateIntervalRef.current);
       }
     };
-  }, [productLocation, userLocation]);
+  }, [routeCoords]);
 
   // 4. Fetch product location
   // useEffect(() => {
@@ -216,44 +192,90 @@ setProductLocation([Details?.lng, Details?.lat])
         'Delivery Person'
       );
     }
-
+ 
     // Add route
     const fetchAndDisplayRoute = async () => {
       try {
         const response = await fetch(
-          `https://api.mapbox.com/directions/v5/mapbox/driving/${userLocation[0]},${userLocation[1]};${productLocation[0]},${productLocation[1]}?geometries=geojson&access_token=${mapboxgl.accessToken}`
+          `https://api.mapbox.com/directions/v5/mapbox/driving/${productLocation[0]}%2C${productLocation[1]}%3B${userLocation[0]}%2C${userLocation[1]}?alternatives=true&steps=true&geometries=geojson&access_token=${mapboxgl.accessToken}`
         );
         const data = await response.json();
         const route = data.routes?.[0]?.geometry;
 
-        if (!route || !map.current) return;
+        // if (!route || !map.current) return;
 
-        map.current.on('load', () => {
-          map.current!.addSource('route', {
-            type: 'geojson',
-            data: {
-              type: 'Feature',
-              properties: {},
-              geometry: route,
-            },
-          });
 
-          map.current!.addLayer(ROUTE_LINE_STYLE);
-        });
+        console.log('Map loaded',data?.routes[0]?.geometry);
+
+
+        setRouteCoords(data?.routes[0]?.geometry?.coordinates); // <- Store route
+
+          const geojson = {
+            'type': 'Feature',
+            'properties': {},
+            'geometry': data?.routes[0]?.geometry
+          };
+
+          if (map?.current?.getSource('route')) {
+            // if the route already exists on the map, reset it using setData
+            map?.current?.getSource('route').setData(geojson);
+
+            // map?.current?.addLayer({
+            //   id: 'route',
+            //   type: 'line',
+            //   source: {
+            //     type: 'geojson',
+            //     data: geojson
+            //   },
+            //   layout: {
+            //     'line-join': 'round',
+            //     'line-cap': 'round'
+            //   },
+            //   paint: {
+            //     'line-color': '#5F9EA0',
+            //     'line-width': 5,
+            //     'line-opacity': 0.8
+            //   }
+            // });
+          }else{
+            map?.current?.addLayer({
+              id: 'route',
+              type: 'line',
+              source: {
+                type: 'geojson',
+                data: geojson
+              },
+              layout: {
+                'line-join': 'round',
+                'line-cap': 'round'
+              },
+              paint: {
+                'line-color': '#3887be',
+
+                'line-width': 8,
+                'line-opacity': 0.9
+              }
+            });
+          }
+          
+
+          // map.current!.addLayer(ROUTE_LINE_STYLE);
+        
       } catch (err) {
         console.warn('Route fetch error:', err);
       }
     };
 
-    fetchAndDisplayRoute();
-
+    map?.current?.on('load', async () => {
+      await fetchAndDisplayRoute();
+    });
     return () => {
       if (map.current) {
         map.current.remove();
         map.current = null;
       }
     };
-  }, [productLocation, userLocation]);
+  }, [productLocation, userLocation,]);
 
   // 6. Update delivery marker position
   useEffect(() => {

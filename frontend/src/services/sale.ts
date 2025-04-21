@@ -17,3 +17,8 @@ export const listOrder = async ({ user_id, restaurant_id }: { user_id?: string; 
     throw new Error("Either user_id or restaurant_id must be provided.");
   }
 };
+
+// Service to update the delivery status of a sale
+export const updateDeliveryStatus = async (data: any) => {
+  return authApi.post('/sale/update-delivery-status', { ...data });
+};

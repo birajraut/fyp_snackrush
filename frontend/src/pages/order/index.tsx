@@ -1,34 +1,27 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 import { useSelector } from 'react-redux';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { IRootReducer } from '../../types/redux';
-import { listOrder } from '../../services/sale';
+import { listOrder, updateDeliveryStatus } from '../../services/sale';
 
 const OrderPage = () => {
   const navigate = useNavigate();
   const { user } = useSelector((root: IRootReducer) => root.auth);
   const { restaurant } = useSelector((root: IRootReducer) => root.auth);
   const { pathname } = useLocation();
-
-
-
-  console.log('user', user);  
+const queryClient= useQueryClient()
   const { data: orders, isLoading, isError } = useQuery({
     queryKey: ['orders', user?.user?._id, restaurant?.id],
     queryFn: async () => {
-      // if (!user?._id && pathname !== '/restaurant/orders') return null;
-
       const isNormalUser = pathname !== '/restaurant/orders';
       const params = isNormalUser
         ? { user_id: user?.user?._id }
         : { restaurant_id: restaurant?.id };
 
-        console.log('params=====>', params);
       const response = await listOrder(params);
       return response?.data?.result || [];
     },
-    // enabled: !!user?._id || pathname === '/restaurant/orders',
   });
 
   const formatDate = (date: string) => {
@@ -59,13 +52,12 @@ const OrderPage = () => {
       ) : orders?.length === 0 ? (
         <p className="text-center text-lg text-gray-500">No orders found.</p>
       ) : (
-        <div className="space-y-8">
+        <div className="space-y-6">
           {orders?.map((order) => (
-            console.log("order here==", order),
-            <div key={order._id} className="bg-white shadow-lg rounded-lg p-6">
+            <div key={order._id} className="bg-white rounded-lg shadow-lg p-4">
               {/* Order Header */}
               <div className="flex items-center justify-between mb-4">
-                <h2 className="font-medium text-gray-800">Order #{order._id}</h2>
+                <h2 className="font-medium text-gray-800">{order._id}</h2>
                 <span
                   className={`px-4 py-2 rounded-full text-white ${
                     order.payment_status === 'Paid' ? 'bg-green-500' : 'bg-yellow-500'
@@ -113,17 +105,50 @@ const OrderPage = () => {
                 Total: ${order.total_cost}
               </div>
 
-              {/* Track Button */}
-              {pathname !== '/restaurant/orders' && (
-                <div className="mt-4 flex justify-between">
+              {/* Delivery Status */}
+              <div className="mt-4 flex items-center justify-between">
+                {pathname === '/restaurant/orders' ? (
+                  <div>
+                    <label htmlFor={`status-${order._id}`} className="block text-sm font-medium text-gray-700 mb-1">
+                      Update Delivery Status:
+                    </label>
+                    <select
+                      id={`status-${order._id}`}
+                      className="block w-full p-2 border border-gray-300 rounded-lg"
+                      value={order.delivery_status || ''}
+                      onChange={async (e) => {
+                        const newStatus = e.target.value;
+                        try {
+                          await updateDeliveryStatus({ saleId: order._id, status: newStatus });
+                          queryClient.invalidateQueries({queryKey: ['orders']})
+                          alert('Delivery status updated successfully!');
+                        } catch (err) {
+                          console.error('Error updating delivery status', err);
+                          alert('Failed to update status.');
+                        }
+                      }}
+                    >
+                      <option value="">Select status</option>
+                      <option value="Cooking">Cooking</option>
+                      <option value="On the way">On the way</option>
+                      <option value="Delivered">Delivered</option>
+                    </select>
+                  </div>
+                ) : (
+                  <div className="text-sm text-gray-700">
+                    <span className="font-medium">Delivery Status: </span>
+                    {order.delivery_status || 'Not Available'}
+                  </div>
+                )}
+                {pathname !== '/restaurant/orders' && order.delivery_status!=='Delivered'&&(
                   <button
                     onClick={() => navigate(`/track/${order._id}`, { state: { order } })}
                     className="px-6 py-2 bg-orange-400 text-white rounded-lg hover:bg-orange-600 focus:outline-none"
                   >
                     Track
                   </button>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           ))}
         </div>
@@ -133,3 +158,4 @@ const OrderPage = () => {
 };
 
 export default OrderPage;
+
