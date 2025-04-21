@@ -40,7 +40,13 @@ const SaleSchema = new mongoose.Schema({
     type: String,
     enum: ['Pending', 'Paid', 'Failed', 'Cash On Delivery'],
     default: 'Pending'
+  },
+  delivery_status: {
+    type: String,
+    enum: ['Cooking', 'On the way', 'Delivered'],
+    default: 'Cooking'
   }
 });
 
 module.exports = mongoose.model('Sale', SaleSchema);
+

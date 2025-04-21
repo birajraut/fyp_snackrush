@@ -43,6 +43,8 @@ console.log("products found:", products);
       products: saleItems,
       total_cost: totalCost,
       payment_status: "Paid",
+      delivery_status: "Cooking",
+
       user_id: userId,
       restaurant_id: restaurantId, // Include restaurant_id
     });
@@ -54,7 +56,6 @@ console.log("products found:", products);
     throw new Error("An error occurred while processing the sale");
   }
 };
-
 
 const getSaleService = async (filterCriteria) => {
   try {
@@ -106,6 +107,7 @@ const getSaleService = async (filterCriteria) => {
           total_cost: { $first: "$total_cost" },
           sale_date: { $first: "$sale_date" },
           payment_status: { $first: "$payment_status" },
+          delivery_status: { $first: "$delivery_status" },
         },
       },
     ]);
@@ -117,4 +119,18 @@ const getSaleService = async (filterCriteria) => {
   }
 };
 
-module.exports = { createSaleService, getSaleService };
+const updateDeliveryStatusService = async (saleId, status) => {
+  try {
+    const sale = await Sales.findById(saleId);
+    if (!sale) throw new Error(`Sale not found: ${saleId}`);
+
+    sale.delivery_status = status;
+    const updatedSale = await sale.save();
+    return updatedSale;
+  } catch (error) {
+    console.error("Error in updateDeliveryStatusService:", error);
+    throw new Error("An error occurred while updating delivery status");
+  }
+};
+
+module.exports = { createSaleService, getSaleService, updateDeliveryStatusService };

@@ -1,5 +1,5 @@
 const Sales = require('../models/Sales');
-const {createSaleService, getSaleService} = require('../service/sales.service')
+const {createSaleService, getSaleService,updateDeliveryStatusService} = require('../service/sales.service')
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 
@@ -36,6 +36,8 @@ console.log("products found:", products);
         next(error)
     }
 }
+
+
 const getSale = async (req, res, next) => {
     try {
       const { user_id, restaurant_id } = req.body || {};
@@ -57,5 +59,19 @@ const getSale = async (req, res, next) => {
     }
   };
 
+const updateDeliveryStatus = async (req, res, next) => {
+    try {
+      const { saleId, status } = req.body || {};
 
-module.exports = {createSale,getSale}
+      if (!saleId || !status) {
+        return res.status(400).json({ message: "saleId and status are required fields." });
+      }
+
+      const resp = await updateDeliveryStatusService(saleId, status);
+      res.json({ result: resp });
+    } catch (error) {
+      next(error);
+    }
+  };
+
+module.exports = {createSale,getSale,updateDeliveryStatus}

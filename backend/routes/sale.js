@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const authMiddleware = require('../middleware/authMiddleware');
 const { isRestaurant } = require('../middleware/rbac');
-const { createSale, getSale } = require('../controller/sale.controller');
+const { createSale, getSale,updateDeliveryStatus } = require('../controller/sale.controller');
 
 // Route to create a sale (for users)
 router.route('/sale')
@@ -15,5 +15,9 @@ router.route('/sales')
 // Route to fetch sales specifically for restaurants
 router.route('/restaurant/sales')
   .post(authMiddleware, isRestaurant, getSale);
+
+// Route to update the delivery status of a sale
+router.route('/sale/update-delivery-status')
+  .post(authMiddleware, updateDeliveryStatus);
 
 module.exports = router;
