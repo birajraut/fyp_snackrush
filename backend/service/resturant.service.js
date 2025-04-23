@@ -7,7 +7,7 @@ const { generateAccessToken, generateRefreshToken } = require("../helper/jwt");
 
 const bcrypt = require('bcrypt')
 const createResturantService = async (data) => {
-    const { name, description, address, userId,lat,lng,image,phone } = data
+    const { name, description, address, userId, lat, lng, image, phone, category } = data
 
 
 console.log('data and name and address', data)
@@ -15,7 +15,7 @@ console.log('data and name and address', data)
     // const hash = bcrypt.hashSync(password, 10)
 
     const newData = {
-        name, description, address,lat,lng,image, phone,creator: userId
+        name, description, address,lat,lng,image, phone, category, creator: userId
     }
 
 

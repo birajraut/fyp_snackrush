@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-
 import { useState, useRef, useEffect } from 'react';
 import Input from "../../ui/Input";
 import Textarea from "../../ui/Textarea";
@@ -32,6 +31,7 @@ interface FormValues {
     latitude?: number;
     longitude?: number;
     image: File | null;
+    category: string;
 }
 
 const RestaurantCreateForm = ({ setIsModalOpen }: IProps) => {
@@ -71,6 +71,7 @@ const RestaurantCreateForm = ({ setIsModalOpen }: IProps) => {
             placeholder: 'Search for restaurant address',
             marker: true,
             flyTo: false,
+            
         });
 
         autocompleteRef.current.addTo(addressInputRef.current);
@@ -138,7 +139,8 @@ const RestaurantCreateForm = ({ setIsModalOpen }: IProps) => {
             address: selectedLocation?.address || '',
             latitude: undefined,
             longitude: undefined,
-            image: null
+            image: null,
+            category: '',
         },
         validateOnChange: false,
         validationSchema: Yup.object({
@@ -148,6 +150,7 @@ const RestaurantCreateForm = ({ setIsModalOpen }: IProps) => {
             address: Yup.string().required('Address is required.'),
             latitude: Yup.number().required('Please select a valid address from the suggestions'),
             longitude: Yup.number().required('Please select a valid address from the suggestions'),
+            category: Yup.string().required('Category is required.'),
         }),
         onSubmit: async (values) => {
             try {
@@ -165,6 +168,7 @@ const RestaurantCreateForm = ({ setIsModalOpen }: IProps) => {
                     lat: values.latitude,
                     lng: values.longitude,
                     image: values.image,
+                    category: values.category,
                 });
                 setIsModalOpen(false);
                 toast.success('Request sent successfully. You will be notified after the request is accepted.');
@@ -196,6 +200,31 @@ const RestaurantCreateForm = ({ setIsModalOpen }: IProps) => {
                     label="Restaurant Description" 
                     error={formik.errors.description} 
                 />
+
+            
+                <label htmlFor="category" className="block text-sm font-medium text-gray-700 mb-1">
+                    Category *
+                </label>
+                <select
+                    id="category"
+                    name="category"
+                    value={formik.values.category}
+                    onChange={formik.handleChange}
+                    className="block w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring focus:ring-blue-500"
+                    aria-label="Select Category"
+                >
+                    <option value="" disabled>
+                        Select Category
+                    </option>
+                    <option value="Nepali">Nepali</option>
+                    <option value="Indian">Indian</option>
+                    <option value="Chinese">Chinese</option>
+                    <option value="Continental">Continental</option>                    
+                </select>
+                {formik.errors.category && (
+                    <p className="mt-1 text-sm text-red-600">{formik.errors.category}</p>
+                )}
+            
 
                 <Textarea 
                     name="phone" 
@@ -251,7 +280,7 @@ const RestaurantCreateForm = ({ setIsModalOpen }: IProps) => {
 
 setSelectedLocation={(location)=>setSelectedLocation(location)} 
 
-accessToken={mapboxgl.accessToken}/>
+accessToken={mapboxgl.accessToken || "Missing Map Token"}/>
               
                 
                 <div className="flex justify-end space-x-3">

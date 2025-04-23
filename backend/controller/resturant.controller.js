@@ -7,7 +7,7 @@ const createResturant = async (req, res, next) => {
     try {
         const logo = req.file
         const userId = req.auth_user
-        const { name, description, address,lat,lng, phone} = req.body
+        const { name, description, address,lat,lng, phone, category} = req.body
         console.log('req body', req.body)
         const image = req.file ? req.file.buffer : ''; // Assuming image is uploaded using multer
         let logoUrl = ''
@@ -16,7 +16,7 @@ const createResturant = async (req, res, next) => {
             logoUrl = uploadCloud?.url
         }
         const data = {
-            name, description, address, userId,lat,lng, phone,   
+            name, description, address, userId,lat,lng, phone, category,   
                     image: logoUrl
 
         }
