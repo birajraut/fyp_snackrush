@@ -56,7 +56,7 @@ console.log(order,'passed data')
 
 
 const getRestaurantLocation=async()=>{
-  const restaurantDetails= await resturantDetailsFn(order?.products[0]?.product?.restaurant_id)
+  const restaurantDetails= await resturantDetailsFn(order?.products[0]?.product?.restaurant_id||(order?.products[0]?.product_id?.restaurant_id))
   console.log(restaurantDetails,'restaurant details')
   const Details=restaurantDetails.data.result
 if (restaurantDetails.data.result) {

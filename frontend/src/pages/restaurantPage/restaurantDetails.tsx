@@ -15,16 +15,18 @@ const RestaurantDetail = () => {
   const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart.cart);
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedTab, setSelectedTab] = useState("all");
 
-
-  // Fetch restaurant details
   const { data: restaurant, isLoading, isError } = useQuery({
     queryKey: ["restaurant-details", id],
     queryFn: async () => resturantDetailsFn(id as string),
   });
 
-  // Fetch product list
-  const { data: productList, isLoading: isLoadingProduct, error: errorProduct } = useQuery({
+  const {
+    data: productList,
+    isLoading: isLoadingProduct,
+    error: errorProduct,
+  } = useQuery({
     queryKey: ["products", id],
     queryFn: async () => listProduct(id as string),
   });
@@ -54,23 +56,19 @@ const RestaurantDetail = () => {
 
   const handleAdd = (product) => {
     if (cart.length > 0) {
-      // Check if all items in the cart are from the same restaurant
       const sameRestaurant = cart[0]?.restaurant?._id === product?.restaurant?._id;
-  
+
       if (!sameRestaurant) {
-        // Alert the user if the cart contains items from a different restaurant
         const confirmClearCart = window.confirm(
           "Your cart contains items from another restaurant. Do you want to clear the cart and add this item?"
         );
         if (!confirmClearCart) {
-          return; // Do nothing if the user cancels
+          return;
         }
-        // Clear the cart if the user confirms
         dispatch(resetCart());
       }
     }
-  
-    // Add the product to the cart
+
     dispatch(addToCart({ ...product, quantity: 1 }));
   };
 
@@ -102,7 +100,7 @@ const RestaurantDetail = () => {
               </li>
               <li className="flex items-center gap-3">
                 <CiPhone className="text-xl" />
-                <span>{restaurantData?.phone || "Number not avaible"}</span>
+                <span>{restaurantData?.phone || "Number not available"}</span>
               </li>
             </ul>
           </div>
@@ -111,64 +109,87 @@ const RestaurantDetail = () => {
 
       {/* Product Section */}
       <div className="container mx-auto py-12 px-4">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
-        <h2 className="text-2xl font-bold text-gray-800">Menu</h2>
-        <input
-          type="text"
-          placeholder="Search food..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full sm:w-64 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-        />
-      </div>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 gap-4">
+          <h2 className="text-2xl font-bold text-gray-800">Menu</h2>
+          <input
+            type="text"
+            placeholder="Search food..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full sm:w-64 px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+        </div>
+
+        {/* Filter Tabs */}
+        <div className="flex gap-3 overflow-x-auto mb-8">
+          {["all", "veg", "nonveg", "snack", "beverage"].map((type) => (
+            <button
+              key={type}
+              onClick={() => setSelectedTab(type)}
+              className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap ${
+                selectedTab === type
+                  ? "bg-green-600 text-white"
+                  : "bg-gray-200 text-gray-700"
+              }`}
+            >
+              {type === "all" ? "All" : type.charAt(0).toUpperCase() + type.slice(1)}
+            </button>
+          ))}
+        </div>
+
         {isLoadingProduct ? (
           <p className="text-center text-lg text-gray-500">Loading products...</p>
         ) : errorProduct ? (
           <p className="text-center text-lg text-red-500">Error loading products.</p>
         ) : (
           <div className="space-y-6">
-            {productList?.data?.result?.filter((product) =>
-                  product.name.toLowerCase().includes(searchTerm.toLowerCase())).map((product) => (
-              <div
-                key={product._id}
-                className="flex items-center gap-6 bg-white shadow-md rounded-lg p-4"
-              >
-                <img
-                  src={product.image || placeholder}
-                  alt={product.name}
-                  className="w-24 h-24 object-cover rounded-md"
-                />
-                <div className="flex-1">
-                  <h3 className="text-lg font-bold text-gray-800">{product.name}</h3>
-                  <p className="text-sm text-gray-600 mt-1">{product.description}</p>
-                  <p className="text-sm text-gray-800 font-semibold mt-2">
-                    Price: Rs. {product.price}
-                  </p>
+            {productList?.data?.result
+              ?.filter(
+                (product) =>
+                  product.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+                  (selectedTab === "all" || product.foodtype === selectedTab)
+              )
+              .map((product) => (
+                <div
+                  key={product._id}
+                  className="flex items-center gap-6 bg-white shadow-md rounded-lg p-4"
+                >
+                  <img
+                    src={product.image || placeholder}
+                    alt={product.name}
+                    className="w-24 h-24 object-cover rounded-md"
+                  />
+                  <div className="flex-1">
+                    <h3 className="text-lg font-bold text-gray-800">{product.name}</h3>
+                    <p className="text-sm text-gray-600 mt-1">{product.description}</p>
+                    <p className="text-sm text-gray-800 font-semibold mt-2">
+                      Price: Rs. {product.price}
+                    </p>
+                  </div>
+                  <div className="flex items-center space-x-4">
+                    <button
+                      onClick={() => handleRemove(product._id)}
+                      disabled={getProductQuantity(product._id) === 0}
+                      className={`px-4 py-2 rounded-lg ${
+                        getProductQuantity(product._id) > 0
+                          ? "bg-red-600 text-white hover:bg-red-700"
+                          : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                      }`}
+                    >
+                      -
+                    </button>
+                    <span className="text-lg font-semibold text-gray-800">
+                      {getProductQuantity(product._id)}
+                    </span>
+                    <button
+                      onClick={() => handleAdd(product)}
+                      className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
+                    >
+                      +
+                    </button>
+                  </div>
                 </div>
-                <div className="flex items-center space-x-4">
-                  <button
-                    onClick={() => handleRemove(product._id)}
-                    disabled={getProductQuantity(product._id) === 0}
-                    className={`px-4 py-2 rounded-lg ${
-                      getProductQuantity(product._id) > 0
-                        ? "bg-red-600 text-white hover:bg-red-700"
-                        : "bg-gray-300 text-gray-500 cursor-not-allowed"
-                    }`}
-                  >
-                    -
-                  </button>
-                  <span className="text-lg font-semibold text-gray-800">
-                    {getProductQuantity(product._id)}
-                  </span>
-                  <button
-                    onClick={() => handleAdd(product)}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
-            ))}
+              ))}
           </div>
         )}
       </div>

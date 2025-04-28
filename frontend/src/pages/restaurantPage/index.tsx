@@ -11,13 +11,26 @@ import CustomButton from "../../components/ui/CustomButton";
 import { CiCirclePlus } from "react-icons/ci";
 import { IRootReducer } from "../../types/redux";
 
+const categories = [
+  "Nepali",
+  "Indian",
+  "Chinese",
+  "Continental"
+];
+
 const RestaurantPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>('');
   const { accessToken } = useSelector((state: IRootReducer) => state.auth);
 
   const { data: restaurantList, isLoading } = useQuery({
     queryKey: ['restaurant-list', isModalOpen],
     queryFn: async () => listRestaurant()
+  });
+
+  const filteredRestaurants = restaurantList?.data?.result?.filter((restaurant) => {
+    if (selectedCategory === '') return true;
+    return restaurant.category === selectedCategory;
   });
 
   if (isLoading) {
@@ -56,13 +69,27 @@ const RestaurantPage = () => {
         )}
       </div>
 
-      {restaurantList?.data?.result?.length === 0 ? (
+      <div className="flex items-center justify-between mb-5">
+        <p className="text-gray-600 text-lg">Filter by category:</p>
+        <select
+          value={selectedCategory || ""}
+          onChange={(e) => setSelectedCategory(e.target.value as string | null)}
+          className="bg-white border border-gray-300 rounded-md p-2"
+        >
+          <option value={''}>All</option>
+          {categories.map((category) => (
+            <option key={category} value={category}>{category}</option>
+          ))}
+        </select>
+      </div>
+
+      {filteredRestaurants?.length === 0 ? (
         <div className="text-center py-10">
           <p className="text-gray-600 text-lg">No restaurants available at the moment.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-          {restaurantList?.data?.result?.map((restaurant: IRestaurantResponse) => (
+          {filteredRestaurants?.map((restaurant: IRestaurantResponse) => (
             <RestaurantCard 
               key={restaurant._id}
               id={restaurant._id} 
@@ -78,3 +105,4 @@ const RestaurantPage = () => {
 };
 
 export default RestaurantPage;
+

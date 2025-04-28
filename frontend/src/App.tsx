@@ -105,7 +105,7 @@
 
 
 
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import RegisterPage from './pages/register/index';
 import HomePage from './pages/homepage';
 import OtpVerificationPage from './pages/verifyOTP';
@@ -175,7 +175,7 @@ const App = () => {
       {/* Restaurant manager private routes */}
       {restaurant?.id && (
         <Route path='/restaurant' element={<UserPrivateRoute children={<RestaurantLayout />} />}>
-          <Route index element='Dashboard Restaurant Manager' />
+          <Route index element={<Navigate to='orders' />} />
           <Route path='items' element={<RestaurantItemsPage />} />
           <Route path='profile' element={<ProfilePage />} />
           <Route path='orders' element={<OrderPage />} />
