@@ -1,47 +1,19 @@
+import { useSelector } from "react-redux";
 import { Card, CardContent } from "../../components/ui/card";
 import { FaCalendarAlt, FaUser, FaComment } from 'react-icons/fa';
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { listBlogs } from "../../services/blog";
 
 const BlogPage = () => {
-  // Sample blog posts data
-  const blogPosts = [
-    {
-      id: 1,
-      title: "The Art of Food Presentation",
-      author: "Chef John",
-      date: "March 15, 2024",
-      comments: 12,
-      image: "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-      excerpt: "Learn the secrets of professional food presentation and how it enhances the dining experience."
-    },
-    {
-      id: 2,
-      title: "Sustainable Restaurant Practices",
-      author: "Sarah Green",
-      date: "March 10, 2024",
-      comments: 8,
-      image: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-      excerpt: "Discover how restaurants are implementing eco-friendly practices to reduce their environmental impact."
-    },
-    {
-      id: 3,
-      title: "The Rise of Plant-Based Cuisine",
-      author: "Michael Vegan",
-      date: "March 5, 2024",
-      comments: 15,
-      image: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1480&q=80",
-      excerpt: "Exploring the growing trend of plant-based dining and its impact on the restaurant industry."
-    },
-    {
-      id: 4,
-      title: "Culinary Trends 2024",
-      author: "Food Critic",
-      date: "March 1, 2024",
-      comments: 20,
-      image: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80",
-      excerpt: "A comprehensive look at the emerging food trends that are shaping the culinary world this year."
-    }
-  ];
+  const user = useSelector((state: any) => state.auth.user); // Fetch user from Redux
+  const navigate = useNavigate();
+  const { data:blogPosts, isLoading, isError } = useQuery({
+    queryKey: ["blogs"],
+    queryFn: async () =>  await listBlogs(),
+  });
 
+  console.log(blogPosts, "blog posts data");
   return (
     <div className="min-h-screen bg-gray-100">
       {/* Hero Section */}
@@ -54,6 +26,18 @@ const BlogPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Add Blog button */}
+      {user?.user?.role === "ADMIN" && (
+        <div className="flex justify-end p-4">
+          <button
+            className="bg-red-600 text-white px-6 py-2 rounded-full hover:bg-red-700 transition-colors"
+            onClick={() => navigate("/blog/create")}
+          >
+            Add Blog
+          </button>
+        </div>
+      )}
 
       {/* Featured Post */}
       <div className="container mx-auto px-4 py-12">
@@ -89,24 +73,26 @@ const BlogPage = () => {
 
         {/* Blog Posts Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {blogPosts.map((post) => (
-            <Card key={post.id} className="overflow-hidden">
-              <img 
-                src={post.image} 
-                alt={post.title} 
-                className="w-full h-48 object-cover"
-              />
+          {blogPosts?.map((post) => (
+            <Card key={post._id} className="overflow-hidden">
+              {post.image && (
+                <img 
+                  src={post.image} 
+                  alt={post.title} 
+                  className="w-full h-48 object-cover"
+                />
+              )}
               <CardContent className="p-6">
                 <div className="flex items-center text-gray-500 text-sm mb-4">
                   <FaCalendarAlt className="mr-2" />
-                  <span>{post.date}</span>
+                  <span>{post.createdAt}</span>
                   <FaUser className="ml-4 mr-2" />
                   <span>{post.author}</span>
                   <FaComment className="ml-4 mr-2" />
-                  <span>{post.comments}</span>
+                  <span>0 Comments</span>
                 </div>
                 <h3 className="text-xl font-bold mb-3">{post.title}</h3>
-                <p className="text-gray-600 mb-4">{post.excerpt}</p>
+                <div className="text-gray-600 mb-4" dangerouslySetInnerHTML={{__html: post.content}} />
                 <button className="text-red-600 hover:text-red-700 font-semibold">
                   Read More →
                 </button>
@@ -120,5 +106,4 @@ const BlogPage = () => {
 };
 
 export default BlogPage;
-
 

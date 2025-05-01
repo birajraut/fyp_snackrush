@@ -114,6 +114,8 @@ import ProfilePage from './pages/profile';
 import RestaurantPage from './pages/restaurantPage';
 import LoginPage from './pages/login/index';
 import BlogPage from './pages/blog';
+import CreateBlogPage from './pages/createBlog';
+
 import CartPage from './pages/cart/cart';
 import TrackProductPage from './pages/trackProduct';
 import CheckoutPage from './pages/checkout/checkout';
@@ -156,6 +158,8 @@ const App = () => {
         <Route path='/restaurants' element={<RestaurantPage />} />
         <Route path='/aboutUs' element={<AboutUs />} />
         <Route path='/blog' element={<BlogPage />} />
+        <Route path='/blog/create' element={<CreateBlogPage />} />
+
         <Route path='/contactUs' element={<ContactUsPage />} />
         <Route path='/restaurant/details/:id' element={<RestaurantDetail />} />
       </Route>
@@ -186,6 +190,7 @@ const App = () => {
 
       {/* Admin private routes */}
       <Route path='/admin' element={<AdminPrivateRoute children={<AdminLayout />} />}>
+
         <Route index element={<DashboardPage/>} />
         <Route path='/admin/dashboard' element={<DashboardPage/>} />
         <Route path='/admin/users' element={<UserListPage />} />
