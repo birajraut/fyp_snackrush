@@ -44,6 +44,8 @@ const UserHeader = () => {
     navigate("/restaurant");
   };
 
+  console.log("user", user);
+
   return (
     <>
       {/* Main Navigation */}
@@ -232,6 +234,37 @@ const UserHeader = () => {
                             ))}
                           </>
                         )}
+
+                        {user?.user?.role === 'ADMIN' && (
+                          <MenuItem>
+                            {({ active }) => (
+                              <a
+                                href="/admin"
+                                className={`flex items-center px-4 py-2 text-sm ${
+                                  active ? "bg-gray-50 text-red-600" : "text-gray-700"
+                                }`}
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  className="h-5 w-5 mr-3"
+                                  fill="none"
+                                  viewBox="0 0 24 24"
+                                  stroke="currentColor"
+                                >
+                                  <path
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
+                                    strokeWidth={2}
+                                    d="M3 12l2-2m0 0l7-7 7 7M13 5v6h6"
+                                  />
+                                </svg>
+                                Admin Dashboard
+                              </a>
+                            )}
+                          </MenuItem>
+                        )}
+
+
 
                         {/* Logout */}
                         <div className="border-t border-gray-100 mt-2">

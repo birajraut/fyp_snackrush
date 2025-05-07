@@ -100,7 +100,7 @@ const navigate = useNavigate()
                                     </>
                                   )}
                                   <p className="text-sm text-gray-600">
-                                    Quantity: {item?.quantity} | Price: ${item?.price * item?.quantity}
+                                    Quantity: {item?.quantity} | Price: Rs. {item?.price * item?.quantity}
                                   </p>
                                 </div>
                               </div>
@@ -114,7 +114,6 @@ const navigate = useNavigate()
             
                           {/* Delivery Status */}
                           <div className="mt-4 flex items-center justify-between">
-                         
                               <div className="text-sm text-gray-700">
                                 <span className="font-medium">Delivery Status: </span>
                                 {order.delivery_status || 'Not Available'}
