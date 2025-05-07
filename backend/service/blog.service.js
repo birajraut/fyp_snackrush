@@ -18,8 +18,14 @@ const blogDetailsService = async (id) => {
     }
     return blog;
 }
-const blogListService = async () => {
-    const blogs = await Blog.find();
+const mongoose = require('mongoose');
+
+const blogListService = async (status) => {
+    const query = status ? { isPublished: status === "PUBLISHED" } : {};
+    
+    console.log("query", query);
+
+    const blogs = await Blog.find(query);
     return blogs;
 }
 module.exports = { blogDetailsService, blogListService,blogCreateService, blogUpdateService };

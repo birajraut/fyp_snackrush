@@ -1,5 +1,6 @@
 import {
   RxBackpack,
+  RxBookmark,
   RxDashboard,
   RxLapTimer,
   RxListBullet,
@@ -75,4 +76,12 @@ export const adminMenu = [
     title: 'Users',
     icon: <RxPerson />,
   },
+  {
+    link: '/blogs',
+    title: 'Blogs',
+    icon: <RxBookmark
+     />,
+  },
+
+
 ];

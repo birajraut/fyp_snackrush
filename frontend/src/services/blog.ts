@@ -7,9 +7,10 @@ import { authApi } from "./axios";
   image: string;
 }
 // Service to list blogs
-export const listBlogs = async () => {
-   const res = await authApi.get('/blog');
-   return res?.data?.result;
+export const listBlogs = async (status?: 'PUBLISHED' | 'NOT_PUBLISHED') => {
+  const url = status ? `/blog?status=${status}` : '/blog';
+  const res = await authApi.get(url);
+  return res?.data?.result;
 };
 
 // Service to get a blog by id

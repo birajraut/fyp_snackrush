@@ -13,10 +13,10 @@ const blogDetails = async (req, res, next) => {
         next(error);
     }
 };
-
 const blogList = async (req, res, next) => {
     try {
-        const resp = await blogListService();
+        const { status } = req.query;
+        const resp = await blogListService(status);
         res.json({
             result: resp,
             message: 'Blogs listed Successfully'

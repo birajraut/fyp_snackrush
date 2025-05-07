@@ -133,6 +133,8 @@ import AdminLayout from './components/layout/AdminLayout';
 import RestaurantItemsPage from './pages/restaurant/items';
 import AdminRestaurantPage from "./pages/admin/restaurant/index"
 import AdminRestaurantView from "./components/ui/restaurant/AdminRestuarantView"
+
+import AdminBlogPage from "./pages/admin/blogs/blog";
 import ForgotPassword from './pages/auth/ForgotPassword';
 import ResetPassword from './pages/auth/ResetPassword';
 import UserListPage from './pages/admin/user/user';
@@ -194,6 +196,7 @@ const App = () => {
         <Route index element={<DashboardPage/>} />
         <Route path='/admin/dashboard' element={<DashboardPage/>} />
         <Route path='/admin/users' element={<UserListPage />} />
+        <Route path='/admin/blogs' element={<AdminBlogPage />} />
 
         <Route path='restaurants' element={<AdminRestaurantPage />} />
         <Route path='restaurant/:id' element={<AdminRestaurantView />} />
