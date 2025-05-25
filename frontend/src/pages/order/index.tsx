@@ -93,7 +93,7 @@ const queryClient= useQueryClient()
                         </>
                       )}
                       <p className="text-sm text-gray-600">
-                        Quantity: {item?.quantity} | Price: ${item?.price * item?.quantity}
+                        Quantity: {item?.quantity} | Price: Rs. {item?.price * item?.quantity}
                       </p>
                     </div>
                   </div>

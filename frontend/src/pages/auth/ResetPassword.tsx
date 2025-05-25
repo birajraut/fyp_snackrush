@@ -8,14 +8,17 @@ import Input from '../../components/ui/Input';
 const ResetPassword = () => {
   const navigate = useNavigate();
   const {state} = useLocation();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(state?.email || ''); 
   const [otp, setOtp] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log(state);
     e.preventDefault();
+
+    console.log({email, otp, newPassword, confirmPassword})
 
     if (!email || !otp || !newPassword || !confirmPassword) {
       toast.error('Please fill all the fields');
@@ -51,6 +54,7 @@ const ResetPassword = () => {
         <form className="space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             <Input
+              name='email'
               type="email"
               placeholder="Email"
               value={state.email}
@@ -63,21 +67,21 @@ const ResetPassword = () => {
               placeholder="OTP"
               value={otp}
               onChange={(e) => setOtp(e.target.value)}
-              required
+              // required
             />
             <Input
               type="password"
               placeholder="New Password"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              required
+              // required
             />
             <Input
               type="password"
               placeholder="Confirm Password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              required
+              // required
             />
           </div>
 

@@ -29,19 +29,19 @@ const navigate = useNavigate()
           icon={<FaShoppingBag size={24} />}
           label="Total Orders"
           value={stats?.totalOrders || 0}
-          bgColor="bg-blue-100"
+          // bgColor="bg-blue-100"
         />
         <CustomCard
           icon={<FaUsers size={24} />}
           label="Total Customers"
           value={stats?.totalCustomers || 1}
-          bgColor="bg-green-100"
+          // bgColor="bg-green-100"
         />
         <CustomCard
           icon={<FaMoneyBillWave size={24} />}
           label="Revenue"
           value={`₹ ${stats?.revenue?.toLocaleString() || 0}`}
-          bgColor="bg-yellow-100"
+          // bgColor="bg-yellow-100"
         />
         {/* <CustomCard
           icon={<FaHamburger size={24} />}
@@ -64,7 +64,7 @@ const navigate = useNavigate()
                 <div key={order._id} className="bg-white rounded-lg shadow-lg p-4 mb-2">
                           {/* Order Header */}
                           <div className="flex items-center justify-between mb-1">
-                            <h2 className=" text-gray-900"><span className="font-semibold">{order.restaurant_id.name}</span> #{order._id}</h2>
+                            <h2 className=" text-gray-900"><span className="font-semibold">{order?.restaurant_id?.name}</span> #{order._id}</h2>
                             <span
                               className={`px-4 py-2 rounded-full text-white ${
                                 order?.payment_status === 'Paid' ? 'bg-green-500' : 'bg-yellow-500'
