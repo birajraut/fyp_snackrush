@@ -33,10 +33,13 @@ const authSlice = createSlice({
     setLoginAs: (state, action: PayloadAction<ILoginAs>) => {
       state.loginAs = action.payload;
     },
+    logout: (state) => {
+      Object.assign(state, initialState); // Reset state to initial values
+    },
   },
 });
 
-export const { setAccessToken, setRestaurant, setRefreshToken, setUser, setLoginAs } =
+export const { setAccessToken, setRestaurant, setRefreshToken, setUser, setLoginAs ,logout} =
   authSlice.actions;
 
 export default authSlice.reducer;

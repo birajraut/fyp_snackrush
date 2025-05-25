@@ -1,7 +1,9 @@
 const {
   registerUserService,
   loginUserService,
-  OTPVerifyService
+  OTPVerifyService,
+  resetPasswordService,
+  forgotPasswordService
 } = require("../service/auth.service");
 const {
   userSchema,
@@ -63,9 +65,41 @@ const loginUser = async (req, res, next) => {
     if (error.message === 'User Not Found' || error.message === 'Incorrect Password') {
       res.status(400).json({ message: 'Invalid email or password' });
     } else {
-      res.status(500).json({ message: 'Internal server error' });
+      res.status(500).json({ message: 'Internal server error' }); 
     }
   }
 };
+const resetPassword = async (req, res, next) => {
+  try {
+    const { email, otp, newPassword } = req.body;
+    if (!email || !otp || !newPassword) {
+      throw new Error('Email, OTP and new password required')
+    }
+    const resp = await resetPasswordService({ email, otp, newPassword });
+    res.json({
+      result: resp,
+      message: "Password reset successfully",
+    });
+  } catch (error) {
+    next(error)
+  }
+}
 
-module.exports = { regitserUser, loginUser, OTPVerify };
+const forgotPassword = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email) {
+      throw new Error('Email required')
+    }
+    const resp = await forgotPasswordService(email);
+    res.json({
+      result: resp,
+      message: "Password reset link sent to email",
+    });
+  } catch (error) {
+    next(error)
+  }
+}
+
+module.exports = { regitserUser, loginUser, OTPVerify, resetPassword, forgotPassword };
+

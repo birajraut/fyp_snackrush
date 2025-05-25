@@ -23,6 +23,7 @@ lng:{
   required: false
 },
 image: { type: String },
+category: {type: String,required: true},
 
   logo: { type: String },
   banner: { type: String },
@@ -41,6 +42,8 @@ image: { type: String },
     ref: 'User',
     required: true
   },
+}, {
+  timestamps: true
 }, {
   timestamps: true 
 });

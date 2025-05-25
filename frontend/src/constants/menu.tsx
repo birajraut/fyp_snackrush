@@ -1,5 +1,6 @@
 import {
   RxBackpack,
+  RxBookmark,
   RxDashboard,
   RxLapTimer,
   RxListBullet,
@@ -18,11 +19,11 @@ export const mainMenu = [
   },
   {
     link: '/blog',
-    title: 'Blogs',
+    title: 'Blog',
   },
   {
     link: '/aboutUs',
-    title: 'About',
+    title: 'About Us',
   },
 ];
 
@@ -33,21 +34,15 @@ export const mainMenuRestaurantManager = [
   },
   {
     link: '/blog',
-    title: 'Blogs',
+    title: 'Blog',
   },
   {
     link: '/aboutUs',
-    title: 'About',
+    title: 'About Us',
   },
 ];
 
 export const restaurantMenu = [
-  // {
-  //   link: '/',
-  //   title: 'Dashboard',
-  //   icon: <RxDashboard />,
-  // },
-
   {
     link: '/items',
     title: 'Items',
@@ -59,22 +54,6 @@ export const restaurantMenu = [
     title: 'Orders',
     icon: <RxMagicWand />,
   },
-
-  //   {
-  //     link: '/delevaries',
-  //     title: 'Delevaries',
-  //     icon: <RxLapTimer />,
-  //   },
-  // {
-  //   link: '/teams',
-  //   title: 'Teams',
-  //   icon: <RxPerson />,
-  // },
-  //   {
-  //     link: '/revenue',
-  //     title: 'Revenue',
-  //     icon: <RxBackpack />,
-  //   },
 ];
 
 
@@ -97,20 +76,12 @@ export const adminMenu = [
     title: 'Users',
     icon: <RxPerson />,
   },
+  {
+    link: '/blogs',
+    title: 'Blogs',
+    icon: <RxBookmark
+     />,
+  },
 
-  //   {
-  //     link: '/delevaries',
-  //     title: 'Delevaries',
-  //     icon: <RxLapTimer />,
-  //   },
-  // {
-  //   link: '/teams',
-  //   title: 'Teams',
-  //   icon: <RxPerson />,
-  // },
-  //   {
-  //     link: '/revenue',
-  //     title: 'Revenue',
-  //     icon: <RxBackpack />,
-  //   },
+
 ];

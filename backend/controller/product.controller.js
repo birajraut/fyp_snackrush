@@ -9,7 +9,7 @@ const createProduct = async (req, res, next) => {
     try {
 
         // console.log(req.body,'product create request body')
-        const { name, description, price, restaurant_id } = req.body;
+        const { name, description, foodtype, price, restaurant_id } = req.body;
         const image = req.file ? req.file.buffer : ''; // Assuming image is uploaded using multer
         let logoUrl = ''
 
@@ -26,6 +26,7 @@ const createProduct = async (req, res, next) => {
         const newProduct = new Product({
             name,
             description,
+            foodtype,
             price,
             restaurant_id,
             image: logoUrl
@@ -40,12 +41,22 @@ const createProduct = async (req, res, next) => {
 };
 
 const updateProduct = async (req, res, next) => {
+    console.log(req.body, 'product update request body')
     try {
         const { id } = req.params;
-        const { name, description, price } = req.body;
+        const { name, description, foodtype, price } = req.body;
+        const image = req.file ? req.file.buffer : ''; // Assuming image is uploaded using multer
+        const updateData = {name, description, foodtype, price}
+        if (image) {
+            const uploadCloud = await uploadCloudinary(image)
+            updateData.image = uploadCloud?.url
+        }
         const updatedProduct = await Product.findByIdAndUpdate(
             id,
-            { name, description, price },
+            updateData,
+            // { name, description, price,  foodtype,    
+            //     image: logoUrl
+            // },
             { new: true }
         );
         if (!updatedProduct) {

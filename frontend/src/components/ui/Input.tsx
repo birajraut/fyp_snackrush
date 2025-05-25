@@ -22,6 +22,8 @@ const Input = ({ type, name, onChange, placeholder, error, className, label, val
         <div className='text-slate-700 text-sm font-semibold mb-1'>{label}</div>
         <div className='relative'>
           <input
+          // disabled={disabled}
+          // contentEditable={!disabled}
             type={showPwd ? 'text' : type}
             name={name}
             value={value}

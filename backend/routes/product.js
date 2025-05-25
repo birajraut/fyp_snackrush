@@ -12,8 +12,8 @@ const { isRestaurant } = require('../middleware/rbac');
 // router.post('/create-product', authMiddleware, upload.single('image'), createProduct );
 
 
-router.route('/product').post(authMiddleware, isRestaurant, createProduct)
-router.route('/product/:id').put(authMiddleware, isRestaurant, updateProduct)
+router.route('/product').post(authMiddleware, upload.single('image'), createProduct)
+router.route('/product/:id').put(authMiddleware,upload.single('image'),isRestaurant, updateProduct)
 
 router.route('/product/:restaurantId').get(listProductController)
 
